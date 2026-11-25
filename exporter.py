@@ -110,7 +110,7 @@ def collect_data(brain_dir, device_id):
 def github_api_put_file(owner, repo, token, file_path, content_dict, commit_message):
     url = f"https://api.github.com/repos/{owner}/{repo}/contents/{file_path}"
     headers = {
-        "Authorization": f"token {token}",
+        "Authorization": f"Bearer {token}",
         "Accept": "application/vnd.github.v3+json",
         "User-Agent": "AntigravityQuotaExporter"
     }
@@ -146,7 +146,7 @@ def github_api_put_file(owner, repo, token, file_path, content_dict, commit_mess
 def github_api_get_file(owner, repo, token, file_path):
     url = f"https://api.github.com/repos/{owner}/{repo}/contents/{file_path}"
     headers = {
-        "Authorization": f"token {token}",
+        "Authorization": f"Bearer {token}",
         "Accept": "application/vnd.github.v3+json",
         "User-Agent": "AntigravityQuotaExporter"
     }
@@ -176,7 +176,7 @@ def main():
     owner = config["repo_owner"]
     repo = config["repo_name"]
     token = config["github_token"]
-    device_id = config.get("device_id", os.environ.get("COMPUTERNAME", "PC-Default"))
+    device_id = config.get("device_id") or os.environ.get("COMPUTERNAME", "PC-Default")
 
     home = os.path.expanduser("~")
     brain_dir = os.path.join(home, ".gemini", "antigravity", "brain")
