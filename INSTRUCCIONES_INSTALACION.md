@@ -10,6 +10,51 @@ El panel visual unificado está publicado en:
 
 ---
 
+## 🔄 Cómo actualizar `PC-Sergio` (cuando ya estaba instalado)
+
+Si `PC-Sergio` ya tenía la versión anterior instalada en `C:\Users\Sergio\.gemini\antigravity\scratch\antigravity-quota-monitor`, **no necesitas tocar `config.json`**. Solo sigue estos 3 pasos en PowerShell:
+
+### 1. Actualizar los scripts (`exporter.py` y `register_hourly_task.ps1`)
+Copia los dos archivos actualizados desde tu carpeta de OneDrive a la carpeta local de `PC-Sergio` (o ejecuta `git pull` si esa carpeta está conectada a GitHub):
+
+```powershell
+# Opción 1: si la carpeta local de PC-Sergio es un repo git
+cd "C:\Users\Sergio\.gemini\antigravity\scratch\antigravity-quota-monitor"
+git pull origin main
+```
+
+```powershell
+# Opción 2: copiarlos directamente desde OneDrive (ajusta la letra de unidad si cambia)
+$origen  = "G:\OneDrive\ANTIGRAVITY\antigravity-quota-monitor"
+$destino = "C:\Users\Sergio\.gemini\antigravity\scratch\antigravity-quota-monitor"
+Copy-Item "$origen\exporter.py" "$destino\exporter.py" -Force
+Copy-Item "$origen\register_hourly_task.ps1" "$destino\register_hourly_task.ps1" -Force
+```
+
+### 2. Re-registrar la tarea programada (cada 30 minutos y sin ventana negra)
+```powershell
+cd "C:\Users\Sergio\.gemini\antigravity\scratch\antigravity-quota-monitor"
+powershell -ExecutionPolicy Bypass -File .\register_hourly_task.ps1
+```
+
+### 3. Forzar la primera sincronización con proyectos cifrados
+```powershell
+python .\exporter.py --force
+```
+
+### 4. Comprobar que quedó bien
+```powershell
+Get-ScheduledTask -TaskName "AntigravityQuotaCloudSync" | Select-Object TaskName, State, @{N='Execute';E={$_.Actions.Execute}}, @{N='Interval';E={$_.Triggers.Repetition.Interval}}
+```
+Debería mostrar:
+* `State`: `Ready`
+* `Execute`: `...\pythonw.exe`
+* `Interval`: `PT30M`
+
+¡Listo! En 1-2 minutos recarga el panel web con `Ctrl + Shift + R` y verás también los proyectos de `PC-Sergio` al desbloquear el apartado **🔒 Consumo por Proyecto** con tu PIN.
+
+---
+
 ## 📁 Paso 1: Copiar la carpeta a OneDrive
 1. Copia toda la carpeta del proyecto:
    ```text
