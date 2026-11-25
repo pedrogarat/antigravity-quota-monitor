@@ -4,20 +4,105 @@ import glob
 import json
 import time
 import base64
+import hashlib
+import sqlite3
+import urllib.parse
 import urllib.request
 import urllib.error
 from datetime import datetime, timezone, timedelta
 from collections import defaultdict
 
 REQUEST_TIMEOUT = 15
+DEFAULT_PROJECTS_PIN = "4852"
 
 
-def collect_data(brain_dir, device_id):
+def load_conversation_projects(agy_dir):
+    """Lee conversation_summaries.db en modo solo lectura y mapea conversation_id -> nombre de carpeta del proyecto."""
+    db_path = os.path.join(agy_dir, "conversation_summaries.db")
+    mapping = {}
+    if not os.path.exists(db_path):
+        return mapping
+    try:
+        con = sqlite3.connect(f"file:{db_path}?mode=ro", uri=True, timeout=5)
+        try:
+            rows = con.execute("SELECT conversation_id, workspace_uris FROM conversation_summaries").fetchall()
+            for cid, ws_raw in rows:
+                if not cid:
+                    continue
+                project_name = "Sin proyecto"
+                if ws_raw:
+                    try:
+                        parsed = json.loads(ws_raw) if ws_raw.startswith("[") else [ws_raw]
+                    except Exception:
+                        parsed = [ws_raw]
+                    names = []
+                    for u in parsed:
+                        if not u:
+                            continue
+                        clean = urllib.parse.unquote(str(u)).rstrip("/\\")
+                        base = os.path.basename(clean)
+                        if base:
+                            names.append(base)
+                    if names:
+                        project_name = ", ".join(dict.fromkeys(names))
+                mapping[cid] = project_name
+        finally:
+            con.close()
+    except Exception:
+        pass
+    return mapping
+
+
+def encrypt_with_pin(obj, pin):
+    """Cifra un objeto JSON con un flujo SHA-256 derivado del PIN y un salt determinista (para evitar commits vacíos)."""
+    raw = json.dumps(obj, ensure_ascii=False, separators=(",", ":"), sort_keys=True).encode("utf-8")
+    salt = hashlib.sha256(b"agy-proj-v1:" + raw).digest()[:16]
+    key = hashlib.sha256(salt + str(pin).encode("utf-8")).digest()
+
+    out = bytearray(len(raw))
+    pos = 0
+    counter = 0
+    while pos < len(raw):
+        block = hashlib.sha256(key + counter.to_bytes(4, "big")).digest()
+        chunk = raw[pos:pos + len(block)]
+        for i, b in enumerate(chunk):
+            out[pos + i] = b ^ block[i]
+        pos += len(chunk)
+        counter += 1
+
+    return {
+        "v": 1,
+        "salt": base64.b64encode(salt).decode("ascii"),
+        "data": base64.b64encode(bytes(out)).decode("ascii"),
+    }
+
+
+def _new_project_bucket():
+    return {"requests": 0, "input": 0, "output": 0, "cache": 0, "models": defaultdict(int)}
+
+
+def _serialize_projects_map(pmap):
+    return {
+        proj: {
+            "requests": v["requests"],
+            "input": v["input"],
+            "output": v["output"],
+            "cache": v["cache"],
+            "models": dict(sorted(v["models"].items())),
+        }
+        for proj, v in sorted(pmap.items())
+    }
+
+
+def collect_data(brain_dir, device_id, projects_pin=DEFAULT_PROJECTS_PIN):
     now = datetime.now(timezone.utc)
     five_hours_ago = now - timedelta(hours=5)
     seven_days_ago = now - timedelta(days=7)
     fourteen_days_ago = now - timedelta(days=14)
     twenty_four_hours_ago = now - timedelta(hours=24)
+
+    agy_dir = os.path.dirname(brain_dir)
+    conv_projects = load_conversation_projects(agy_dir)
 
     stats = {
         "device_id": device_id,
@@ -35,8 +120,17 @@ def collect_data(brain_dir, device_id):
     hours_24 = defaultdict(lambda: {"requests": 0, "input": 0, "output": 0, "cache": 0})
     days_14 = defaultdict(lambda: {"requests": 0, "input": 0, "output": 0, "cache": 0, "models": defaultdict(int)})
 
+    proj_5h = defaultdict(_new_project_bucket)
+    proj_7d = defaultdict(_new_project_bucket)
+    proj_14d = defaultdict(_new_project_bucket)
+    proj_total = defaultdict(_new_project_bucket)
+
     pattern = os.path.join(brain_dir, "*", ".system_generated", "logs", "transcript.jsonl")
     for path in glob.glob(pattern):
+        rel = os.path.relpath(path, brain_dir)
+        conv_id = rel.split(os.sep)[0]
+        project_name = conv_projects.get(conv_id, "Sin proyecto")
+
         try:
             with open(path, "r", encoding="utf-8") as f:
                 for line in f:
@@ -69,6 +163,13 @@ def collect_data(brain_dir, device_id):
                         stats["total_requests"] += 1
                         stats["total_tokens"] += tot
 
+                        pt = proj_total[project_name]
+                        pt["requests"] += 1
+                        pt["input"] += inp
+                        pt["output"] += out
+                        pt["cache"] += cache
+                        pt["models"][model] += 1
+
                         if dt_utc >= five_hours_ago:
                             p = stats["last_5h"]
                             p["requests"] += 1
@@ -80,6 +181,13 @@ def collect_data(brain_dir, device_id):
                             m["input"] += inp
                             m["output"] += out
                             m["cache"] += cache
+
+                            p5 = proj_5h[project_name]
+                            p5["requests"] += 1
+                            p5["input"] += inp
+                            p5["output"] += out
+                            p5["cache"] += cache
+                            p5["models"][model] += 1
 
                         if dt_utc >= seven_days_ago:
                             p = stats["last_7d"]
@@ -93,8 +201,14 @@ def collect_data(brain_dir, device_id):
                             m["output"] += out
                             m["cache"] += cache
 
+                            p7 = proj_7d[project_name]
+                            p7["requests"] += 1
+                            p7["input"] += inp
+                            p7["output"] += out
+                            p7["cache"] += cache
+                            p7["models"][model] += 1
+
                         if dt_utc >= twenty_four_hours_ago:
-                            # Guardamos la hora en ISO UTC para que el panel la muestre en hora local
                             hour_key = dt_utc.strftime("%Y-%m-%dT%H:00:00Z")
                             h = hours_24[hour_key]
                             h["requests"] += 1
@@ -103,7 +217,6 @@ def collect_data(brain_dir, device_id):
                             h["cache"] += cache
 
                         if dt_utc >= fourteen_days_ago:
-                            # Agrupamos por fecha local del equipo
                             day_key = dt_local.strftime("%Y-%m-%d")
                             d = days_14[day_key]
                             d["requests"] += 1
@@ -111,6 +224,13 @@ def collect_data(brain_dir, device_id):
                             d["output"] += out
                             d["cache"] += cache
                             d["models"][model] += 1
+
+                            p14 = proj_14d[project_name]
+                            p14["requests"] += 1
+                            p14["input"] += inp
+                            p14["output"] += out
+                            p14["cache"] += cache
+                            p14["models"][model] += 1
         except Exception:
             pass
 
@@ -127,6 +247,16 @@ def collect_data(brain_dir, device_id):
         }
         for k, v in sorted(days_14.items())
     }
+
+    if projects_pin:
+        projects_payload = {
+            "v": 1,
+            "last_5h": _serialize_projects_map(proj_5h),
+            "last_7d": _serialize_projects_map(proj_7d),
+            "last_14d": _serialize_projects_map(proj_14d),
+            "total": _serialize_projects_map(proj_total),
+        }
+        stats["projects_encrypted"] = encrypt_with_pin(projects_payload, projects_pin)
 
     return stats
 
@@ -212,9 +342,9 @@ def update_manifest_with_retry(owner, repo, token, device_id, device_file, updat
             ):
                 return True
         except urllib.error.HTTPError as e:
-            if e.code in (409, 422) and attempt < max_retries - 1:
+            if e.code in (409, 422, 500, 502, 503) and attempt < max_retries - 1:
                 wait_s = 1.5 * (attempt + 1)
-                print(f"[!] Conflicto al actualizar manifest.json (HTTP {e.code}), reintentando en {wait_s:.1f}s...")
+                print(f"[!] Error temporal al actualizar manifest.json (HTTP {e.code}), reintentando en {wait_s:.1f}s...")
                 time.sleep(wait_s)
                 continue
             raise
@@ -238,12 +368,13 @@ def main():
     repo = config["repo_name"]
     token = config["github_token"]
     device_id = (config.get("device_id") or os.environ.get("COMPUTERNAME") or "PC-Default").strip()
+    projects_pin = str(config.get("projects_pin", DEFAULT_PROJECTS_PIN))
 
     home = os.path.expanduser("~")
     brain_dir = os.path.join(home, ".gemini", "antigravity", "brain")
 
     print(f"[{datetime.now().strftime('%H:%M:%S')}] Recopilando métricas locales para dispositivo: {device_id}...")
-    stats = collect_data(brain_dir, device_id)
+    stats = collect_data(brain_dir, device_id, projects_pin=projects_pin)
     device_file = f"data/devices/{device_id}.json"
 
     try:
@@ -257,19 +388,34 @@ def main():
         return
 
     print(f"Subiendo a GitHub: {device_file}...")
-    try:
-        success = github_api_put_file(
-            owner,
-            repo,
-            token,
-            device_file,
-            stats,
-            f"Update quota telemetry from {device_id}",
-            sha=remote_sha,
-        )
-    except Exception as e:
-        print(f"[ERROR] No se pudo subir {device_file}: {e}")
-        sys.exit(1)
+    success = False
+    for attempt in range(3):
+        try:
+            success = github_api_put_file(
+                owner,
+                repo,
+                token,
+                device_file,
+                stats,
+                f"Update quota telemetry from {device_id}",
+                sha=remote_sha,
+            )
+            break
+        except urllib.error.HTTPError as e:
+            if e.code in (409, 422, 500, 502, 503) and attempt < 2:
+                wait_s = 1.5 * (attempt + 1)
+                print(f"[!] Error temporal al subir {device_file} (HTTP {e.code}), reintentando en {wait_s:.1f}s...")
+                time.sleep(wait_s)
+                try:
+                    _, remote_sha = github_api_get_file_with_sha(owner, repo, token, device_file)
+                except Exception:
+                    pass
+                continue
+            print(f"[ERROR] No se pudo subir {device_file}: {e}")
+            sys.exit(1)
+        except Exception as e:
+            print(f"[ERROR] No se pudo subir {device_file}: {e}")
+            sys.exit(1)
 
     if not success:
         print("[ERROR] GitHub no confirmó la actualización del archivo del dispositivo.")

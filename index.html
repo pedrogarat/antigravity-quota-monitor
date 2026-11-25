@@ -79,6 +79,16 @@
         .chart-label { font-size: 0.7rem; color: var(--text-muted); margin-top: 8px; white-space: nowrap; }
         .tooltip { position: absolute; bottom: 108%; background: #0b0f19; border: 1px solid var(--border); padding: 6px 10px; border-radius: 6px; font-size: 0.75rem; white-space: nowrap; display: none; z-index: 10; box-shadow: 0 4px 10px rgba(0,0,0,0.5); pointer-events: none; }
         .chart-col:hover .tooltip { display: block; }
+
+        .pin-box { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; padding: 14px 16px; background: rgba(11, 15, 25, 0.7); border: 1px solid var(--border); border-radius: 10px; }
+        .pin-input { background: #0b0f19; border: 1px solid var(--border); color: #fff; padding: 8px 12px; border-radius: 8px; width: 130px; font-size: 0.95rem; font-weight: 700; letter-spacing: 3px; text-align: center; outline: none; }
+        .pin-input:focus { border-color: var(--primary); }
+        .btn-secondary { background: rgba(148, 163, 184, 0.15); color: var(--text); border: 1px solid var(--border); padding: 7px 12px; border-radius: 8px; font-weight: 600; cursor: pointer; font-size: 0.82rem; }
+        .btn-secondary:hover { background: rgba(148, 163, 184, 0.25); }
+        .pin-error { color: var(--danger); font-size: 0.85rem; font-weight: 600; }
+        .tabs { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
+        .tab-btn { background: rgba(255, 255, 255, 0.04); border: 1px solid var(--border); color: var(--text-muted); padding: 6px 14px; border-radius: 8px; cursor: pointer; font-size: 0.85rem; font-weight: 600; transition: 0.15s; }
+        .tab-btn.active { background: var(--primary-bg); border-color: var(--primary); color: var(--primary); }
     </style>
 </head>
 <body>
@@ -222,6 +232,53 @@
                 </table>
             </div>
         </div>
+
+        <!-- APARTADO PROTEGIDO: PROYECTOS -->
+        <div class="card" style="margin-bottom: 24px;" id="projects-card">
+            <div class="card-header">
+                <span class="card-title">🔒 Consumo por Proyecto</span>
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <span class="card-badge" id="projects-lock-badge">Protegido con PIN</span>
+                    <button class="btn-secondary" id="projects-lock-btn" style="display: none;" onclick="lockProjects()">🔒 Bloquear</button>
+                </div>
+            </div>
+
+            <div id="projects-locked-view">
+                <p class="text-muted" style="font-size: 0.88rem; margin-bottom: 12px;">
+                    Los nombres de proyectos se almacenan cifrados. Introduce el PIN para desbloquear este apartado.
+                </p>
+                <div class="pin-box">
+                    <input type="password" inputmode="numeric" maxlength="12" id="projects-pin-input" class="pin-input" placeholder="••••" onkeydown="if (event.key === 'Enter') unlockProjects()">
+                    <button class="btn" onclick="unlockProjects()">🔓 Desbloquear</button>
+                    <span class="pin-error" id="projects-pin-error"></span>
+                </div>
+            </div>
+
+            <div id="projects-unlocked-view" style="display: none;">
+                <div class="tabs">
+                    <button class="tab-btn active" data-range="last_5h" onclick="setProjectsRange('last_5h')">Últimas 5h</button>
+                    <button class="tab-btn" data-range="last_7d" onclick="setProjectsRange('last_7d')">Últimos 7 días</button>
+                    <button class="tab-btn" data-range="last_14d" onclick="setProjectsRange('last_14d')">Últimos 14 días</button>
+                    <button class="tab-btn" data-range="total" onclick="setProjectsRange('total')">Histórico total</button>
+                </div>
+                <div style="overflow-x: auto;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Proyecto</th>
+                                <th>Peticiones</th>
+                                <th>Entrada</th>
+                                <th>Salida</th>
+                                <th>Caché</th>
+                                <th>Equipos</th>
+                                <th>Modelos</th>
+                            </tr>
+                        </thead>
+                        <tbody id="projects-table-body"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
     </div>
 
     <script>
@@ -231,6 +288,174 @@
         const FRESH_SYNC_MS = 65 * 60 * 1000;
 
         let allDevicesData = {};
+        let unlockedPin = null;
+        let decryptedProjectsByDevice = {};
+        let activeProjectsRange = "last_7d";
+
+        async function decryptWithPin(encObj, pin) {
+            if (!encObj || !encObj.salt || !encObj.data) return null;
+            if (!window.crypto || !window.crypto.subtle) {
+                throw new Error("WebCrypto no disponible (abre el panel desde HTTPS o localhost)");
+            }
+            const salt = Uint8Array.from(atob(encObj.salt), c => c.charCodeAt(0));
+            const cipher = Uint8Array.from(atob(encObj.data), c => c.charCodeAt(0));
+            const pinBytes = new TextEncoder().encode(String(pin));
+            const keyInput = new Uint8Array(salt.length + pinBytes.length);
+            keyInput.set(salt, 0);
+            keyInput.set(pinBytes, salt.length);
+            const key = new Uint8Array(await window.crypto.subtle.digest("SHA-256", keyInput));
+
+            const plain = new Uint8Array(cipher.length);
+            let pos = 0;
+            let counter = 0;
+            while (pos < cipher.length) {
+                const blockIn = new Uint8Array(key.length + 4);
+                blockIn.set(key, 0);
+                blockIn[key.length] = (counter >>> 24) & 0xff;
+                blockIn[key.length + 1] = (counter >>> 16) & 0xff;
+                blockIn[key.length + 2] = (counter >>> 8) & 0xff;
+                blockIn[key.length + 3] = counter & 0xff;
+                const block = new Uint8Array(await window.crypto.subtle.digest("SHA-256", blockIn));
+                const len = Math.min(block.length, cipher.length - pos);
+                for (let i = 0; i < len; i++) {
+                    plain[pos + i] = cipher[pos + i] ^ block[i];
+                }
+                pos += len;
+                counter++;
+            }
+            const text = new TextDecoder("utf-8", { fatal: true }).decode(plain);
+            const parsed = JSON.parse(text);
+            if (!parsed || parsed.v !== 1) throw new Error("PIN incorrecto");
+            return parsed;
+        }
+
+        async function decryptAllDevicesWithPin(pin) {
+            const decrypted = {};
+            let encryptedCount = 0;
+            let successCount = 0;
+            for (const [key, dev] of Object.entries(allDevicesData)) {
+                if (!dev || !dev.projects_encrypted) continue;
+                encryptedCount++;
+                try {
+                    decrypted[key] = await decryptWithPin(dev.projects_encrypted, pin);
+                    successCount++;
+                } catch (e) {
+                    // PIN inválido para este dispositivo
+                }
+            }
+            return { decrypted, encryptedCount, successCount };
+        }
+
+        async function unlockProjects() {
+            const input = document.getElementById("projects-pin-input");
+            const errEl = document.getElementById("projects-pin-error");
+            const pin = (input.value || "").trim();
+            errEl.textContent = "";
+            if (!pin) {
+                errEl.textContent = "Introduce un PIN.";
+                return;
+            }
+            try {
+                const { decrypted, encryptedCount, successCount } = await decryptAllDevicesWithPin(pin);
+                if (encryptedCount === 0) {
+                    errEl.textContent = "Aún no hay dispositivos con datos de proyectos subidos.";
+                    return;
+                }
+                if (successCount === 0) {
+                    errEl.textContent = "PIN incorrecto.";
+                    input.select();
+                    return;
+                }
+                unlockedPin = pin;
+                decryptedProjectsByDevice = decrypted;
+                input.value = "";
+                document.getElementById("projects-locked-view").style.display = "none";
+                document.getElementById("projects-unlocked-view").style.display = "block";
+                document.getElementById("projects-lock-btn").style.display = "inline-flex";
+                document.getElementById("projects-lock-badge").textContent = "Desbloqueado";
+                setProjectsRange(activeProjectsRange);
+            } catch (err) {
+                errEl.textContent = err.message || "Error al descifrar.";
+            }
+        }
+
+        function lockProjects() {
+            unlockedPin = null;
+            decryptedProjectsByDevice = {};
+            document.getElementById("projects-unlocked-view").style.display = "none";
+            document.getElementById("projects-locked-view").style.display = "block";
+            document.getElementById("projects-lock-btn").style.display = "none";
+            document.getElementById("projects-lock-badge").textContent = "Protegido con PIN";
+            document.getElementById("projects-pin-error").textContent = "";
+        }
+
+        function setProjectsRange(range) {
+            activeProjectsRange = range;
+            document.querySelectorAll("#projects-unlocked-view .tab-btn").forEach(btn => {
+                btn.classList.toggle("active", btn.dataset.range === range);
+            });
+            renderProjectsSection();
+        }
+
+        function renderProjectsSection() {
+            if (!unlockedPin) return;
+            const selected = document.getElementById("device-selector").value;
+            const deviceKeys = (selected !== "ALL" && allDevicesData[selected])
+                ? [selected]
+                : Object.keys(allDevicesData);
+
+            const merged = {};
+            for (const key of deviceKeys) {
+                const dev = allDevicesData[key];
+                const projData = decryptedProjectsByDevice[key];
+                if (!dev || !projData) continue;
+
+                const ageMs = getDeviceAgeMs(dev);
+                if (activeProjectsRange === "last_5h" && ageMs > FIVE_HOURS_MS) continue;
+                if (activeProjectsRange === "last_7d" && ageMs > SEVEN_DAYS_MS) continue;
+
+                const bucket = projData[activeProjectsRange] || {};
+                for (const [projName, vals] of Object.entries(bucket)) {
+                    if (!merged[projName]) {
+                        merged[projName] = { requests: 0, input: 0, output: 0, cache: 0, devices: new Set(), models: {} };
+                    }
+                    const target = merged[projName];
+                    target.requests += vals.requests || 0;
+                    target.input += vals.input || 0;
+                    target.output += vals.output || 0;
+                    target.cache += vals.cache || 0;
+                    target.devices.add(dev.device_id || key);
+                    for (const [m, cnt] of Object.entries(vals.models || {})) {
+                        target.models[m] = (target.models[m] || 0) + cnt;
+                    }
+                }
+            }
+
+            const tbody = document.getElementById("projects-table-body");
+            const entries = Object.entries(merged).sort((a, b) => b[1].requests - a[1].requests);
+            if (entries.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="7" class="text-muted" style="text-align:center;">Sin actividad por proyecto en este periodo</td></tr>`;
+                return;
+            }
+            tbody.innerHTML = entries.map(([projName, vals]) => {
+                const devicesText = Array.from(vals.devices).map(d => `<span class="badge gray">${escapeHtml(d)}</span>`).join(" ");
+                const modelsText = Object.entries(vals.models)
+                    .sort((a, b) => b[1] - a[1])
+                    .map(([m, cnt]) => `<strong>${escapeHtml(m)}</strong>: ${formatNum(cnt)}`)
+                    .join(", ");
+                return `
+                    <tr>
+                        <td style="font-weight:700;">📁 ${escapeHtml(projName)}</td>
+                        <td><span class="badge blue">${formatNum(vals.requests)}</span></td>
+                        <td>${formatNum(vals.input)}</td>
+                        <td>${formatNum(vals.output)}</td>
+                        <td class="text-muted">${formatNum(vals.cache)}</td>
+                        <td>${devicesText}</td>
+                        <td class="text-muted" style="font-size:0.84rem;">${modelsText}</td>
+                    </tr>
+                `;
+            }).join("");
+        }
 
         function escapeHtml(value) {
             return String(value ?? "")
@@ -313,6 +538,10 @@
                 }));
 
                 document.getElementById("last-refresh-text").textContent = "Última lectura del panel: " + new Date().toLocaleString();
+                if (unlockedPin) {
+                    const { decrypted } = await decryptAllDevicesWithPin(unlockedPin);
+                    decryptedProjectsByDevice = decrypted;
+                }
                 renderView();
             } catch (err) {
                 console.warn("Esperando datos en GitHub...", err);
@@ -561,6 +790,8 @@
                     `;
                 }).join("");
             }
+
+            renderProjectsSection();
         }
 
         function updateLimits() {
