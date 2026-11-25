@@ -1,0 +1,7 @@
+# Ignorar credenciales locales
+config.json
+
+# Ignorar archivos de Python
+__pycache__/
+*.pyc
+.venv/
