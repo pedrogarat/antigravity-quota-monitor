@@ -32,18 +32,23 @@
         .btn { background: var(--primary); color: #0b0f19; border: none; padding: 8px 16px; border-radius: 8px; font-weight: 600; cursor: pointer; transition: 0.2s; font-size: 0.88rem; display: inline-flex; align-items: center; gap: 6px; }
         .btn:hover { opacity: 0.9; }
 
-        .sync-bar { display: flex; align-items: center; gap: 16px; background: rgba(15, 23, 42, 0.6); border: 1px solid var(--border); padding: 10px 16px; border-radius: 8px; margin-bottom: 24px; font-size: 0.85rem; color: var(--text-muted); flex-wrap: wrap; }
+        .sync-bar { display: flex; align-items: center; justify-content: space-between; gap: 16px; background: rgba(15, 23, 42, 0.6); border: 1px solid var(--border); padding: 10px 16px; border-radius: 8px; margin-bottom: 24px; font-size: 0.85rem; color: var(--text-muted); flex-wrap: wrap; }
+        .sync-devices-wrap { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
         .sync-device-item { display: inline-flex; align-items: center; gap: 6px; }
-        .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--success); }
+        .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--success); flex-shrink: 0; }
+        .dot.stale { background: var(--warning); }
+        .dot.offline { background: #64748b; }
+        .total-pill { background: rgba(56, 189, 248, 0.1); border: 1px solid rgba(56, 189, 248, 0.25); color: var(--text); padding: 4px 10px; border-radius: 6px; font-size: 0.82rem; }
 
         .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(360px, 1fr)); gap: 20px; margin-bottom: 24px; }
         .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--card-radius); padding: 22px; }
-        .card-header { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 14px; }
+        .card-header { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 14px; gap: 10px; flex-wrap: wrap; }
         .card-title { font-size: 1.15rem; font-weight: 700; color: #fff; display: flex; align-items: center; gap: 8px; }
         .card-badge { font-size: 0.8rem; color: var(--text-muted); background: rgba(255,255,255,0.05); padding: 3px 8px; border-radius: 6px; }
 
         .metric-big { font-size: 2.4rem; font-weight: 800; color: #fff; letter-spacing: -0.5px; }
         .metric-sub { color: var(--text-muted); font-size: 0.9rem; margin-bottom: 18px; }
+        .stale-note { color: var(--warning); font-size: 0.8rem; margin-top: -12px; margin-bottom: 14px; }
 
         .progress-box { background: rgba(11, 15, 25, 0.7); padding: 16px; border-radius: 10px; border: 1px solid var(--border); margin-bottom: 20px; }
         .progress-header { display: flex; justify-content: space-between; font-size: 0.88rem; font-weight: 600; margin-bottom: 8px; }
@@ -65,12 +70,14 @@
         .badge.gray { background: #22304d; color: #cbd5e1; }
         .text-muted { color: var(--text-muted); }
 
-        .chart-container { margin-top: 20px; display: flex; align-items: flex-end; gap: 10px; height: 140px; padding-top: 25px; border-bottom: 1px solid var(--border); }
-        .chart-col { flex: 1; display: flex; flex-direction: column; align-items: center; height: 100%; justify-content: flex-end; position: relative; }
-        .chart-bar { width: 100%; min-width: 10px; background: var(--primary); border-radius: 4px 4px 0 0; opacity: 0.85; transition: 0.2s; }
-        .chart-bar:hover { opacity: 1; background: #60a5fa; }
-        .chart-label { font-size: 0.72rem; color: var(--text-muted); margin-top: 8px; white-space: nowrap; }
-        .tooltip { position: absolute; bottom: 108%; background: #0b0f19; border: 1px solid var(--border); padding: 6px 10px; border-radius: 6px; font-size: 0.75rem; white-space: nowrap; display: none; z-index: 10; box-shadow: 0 4px 10px rgba(0,0,0,0.5); }
+        .chart-container { margin-top: 20px; display: flex; align-items: flex-end; gap: 6px; height: 145px; padding-top: 25px; border-bottom: 1px solid var(--border); }
+        .chart-col { flex: 1; min-width: 0; display: flex; flex-direction: column; align-items: center; height: 100%; justify-content: flex-end; position: relative; }
+        .chart-bar { width: 100%; min-width: 6px; background: var(--primary); border-radius: 4px 4px 0 0; opacity: 0.85; transition: 0.2s; }
+        .chart-bar.hourly { background: linear-gradient(180deg, #818cf8, #38bdf8); }
+        .chart-bar.empty { background: rgba(148, 163, 184, 0.15); }
+        .chart-bar:hover { opacity: 1; filter: brightness(1.15); }
+        .chart-label { font-size: 0.7rem; color: var(--text-muted); margin-top: 8px; white-space: nowrap; }
+        .tooltip { position: absolute; bottom: 108%; background: #0b0f19; border: 1px solid var(--border); padding: 6px 10px; border-radius: 6px; font-size: 0.75rem; white-space: nowrap; display: none; z-index: 10; box-shadow: 0 4px 10px rgba(0,0,0,0.5); pointer-events: none; }
         .chart-col:hover .tooltip { display: block; }
     </style>
 </head>
@@ -92,8 +99,11 @@
         </header>
 
         <div class="sync-bar" id="sync-bar">
-            <span><strong>Dispositivos conectados:</strong></span>
-            <span id="sync-devices-list" class="text-muted">Buscando dispositivos...</span>
+            <div class="sync-devices-wrap">
+                <span><strong>Dispositivos:</strong></span>
+                <span id="sync-devices-list" class="text-muted">Buscando dispositivos...</span>
+            </div>
+            <div class="total-pill" id="total-historical-pill">Histórico: —</div>
         </div>
 
         <div class="grid">
@@ -105,6 +115,7 @@
                 </div>
                 <div class="metric-big"><span id="val-req-5h">0</span> <span style="font-size: 1.1rem; color: var(--text-muted); font-weight: 500;">peticiones</span></div>
                 <div class="metric-sub" id="val-tokens-5h">0 tokens totales</div>
+                <div class="stale-note" id="stale-note-5h" style="display: none;"></div>
 
                 <div class="progress-box">
                     <div class="progress-header">
@@ -116,7 +127,7 @@
                     </div>
                     <div class="quota-controls">
                         <label for="limit-5h">Tu cuota límite (5h):</label>
-                        <input type="number" id="limit-5h" value="1000" step="50" oninput="updateLimits()">
+                        <input type="number" id="limit-5h" value="1000" step="50" min="1" oninput="updateLimits()">
                         <span>peticiones</span>
                     </div>
                 </div>
@@ -144,6 +155,7 @@
                 </div>
                 <div class="metric-big"><span id="val-req-7d">0</span> <span style="font-size: 1.1rem; color: var(--text-muted); font-weight: 500;">peticiones</span></div>
                 <div class="metric-sub" id="val-tokens-7d">0 tokens totales</div>
+                <div class="stale-note" id="stale-note-7d" style="display: none;"></div>
 
                 <div class="progress-box">
                     <div class="progress-header">
@@ -155,7 +167,7 @@
                     </div>
                     <div class="quota-controls">
                         <label for="limit-7d">Tu cuota límite (7d):</label>
-                        <input type="number" id="limit-7d" value="10000" step="500" oninput="updateLimits()">
+                        <input type="number" id="limit-7d" value="10000" step="500" min="1" oninput="updateLimits()">
                         <span>peticiones</span>
                     </div>
                 </div>
@@ -176,10 +188,19 @@
             </div>
         </div>
 
+        <!-- ACTIVIDAD ÚLTIMAS 24 HORAS -->
+        <div class="card" style="margin-bottom: 24px;">
+            <div class="card-header">
+                <span class="card-title">🕒 Actividad por Hora (Últimas 24h)</span>
+                <span class="card-badge">Hora local del navegador</span>
+            </div>
+            <div class="chart-container" id="hourly-chart"></div>
+        </div>
+
         <!-- ACTIVIDAD DIARIA RECIENTE -->
         <div class="card" style="margin-bottom: 24px;">
             <div class="card-header">
-                <span class="card-title">📈 Histórico Diario de Actividad</span>
+                <span class="card-title">📈 Histórico Diario de Actividad (14 días)</span>
                 <span class="card-badge">Peticiones y Tokens por Día</span>
             </div>
             
@@ -204,36 +225,83 @@
     </div>
 
     <script>
+        const FIVE_HOURS_MS = 5 * 60 * 60 * 1000;
+        const SEVEN_DAYS_MS = 7 * 24 * 60 * 60 * 1000;
+        const TWENTY_FOUR_HOURS_MS = 24 * 60 * 60 * 1000;
+        const FRESH_SYNC_MS = 65 * 60 * 1000;
+
         let allDevicesData = {};
+
+        function escapeHtml(value) {
+            return String(value ?? "")
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#39;");
+        }
 
         function formatNum(n) {
             return (n || 0).toLocaleString('es-ES');
         }
 
+        function formatRelativeAge(ageMs) {
+            if (!Number.isFinite(ageMs) || ageMs < 0) return "ahora";
+            const mins = Math.floor(ageMs / 60000);
+            if (mins < 1) return "hace <1 min";
+            if (mins < 60) return `hace ${mins} min`;
+            const hours = Math.floor(mins / 60);
+            if (hours < 24) return `hace ${hours} h`;
+            const days = Math.floor(hours / 24);
+            return `hace ${days} d`;
+        }
+
+        function parseHourKeyToMs(key) {
+            if (!key) return NaN;
+            // Soporta tanto ISO UTC ("2026-11-25T08:00:00Z") como formato antiguo ("2026-11-25 08:00")
+            const normalized = key.includes("T") ? key : key.replace(" ", "T") + ":00Z";
+            return Date.parse(normalized);
+        }
+
+        function getDeviceAgeMs(dev) {
+            if (!dev || !dev.updated_at) return Infinity;
+            const ts = Date.parse(dev.updated_at);
+            if (!Number.isFinite(ts)) return Infinity;
+            return Math.max(0, Date.now() - ts);
+        }
+
         async function fetchData() {
             try {
-                // Fetch manifest
                 const manifestResp = await fetch('data/manifest.json?t=' + Date.now());
                 if (!manifestResp.ok) throw new Error("No manifest found");
                 const manifest = await manifestResp.json();
 
                 const devices = manifest.devices || {};
                 const deviceKeys = Object.keys(devices);
+                const nowMs = Date.now();
                 
-                // Update sync bar
+                // Update sync bar with freshness indicator
                 const syncList = document.getElementById("sync-devices-list");
-                syncList.innerHTML = deviceKeys.map(d => `<span class="sync-device-item"><span class="dot"></span> <strong>${d}</strong> (act: ${new Date(devices[d].updated_at).toLocaleTimeString()})</span>`).join(" &bull; ") || "Sin dispositivos sincronizados aún";
+                syncList.innerHTML = deviceKeys.map(d => {
+                    const updatedAt = devices[d].updated_at;
+                    const ageMs = updatedAt ? Math.max(0, nowMs - Date.parse(updatedAt)) : Infinity;
+                    const dotClass = ageMs <= FRESH_SYNC_MS ? "" : (ageMs <= FIVE_HOURS_MS ? "stale" : "offline");
+                    const timeLabel = updatedAt ? new Date(updatedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : "—";
+                    const ageText = formatRelativeAge(ageMs);
+                    const expiredNote = ageMs > FIVE_HOURS_MS ? " · 5h expirada" : "";
+                    return `<span class="sync-device-item" title="Última sincronización: ${escapeHtml(updatedAt || 'desconocida')}"><span class="dot ${dotClass}"></span> <strong>${escapeHtml(d)}</strong> (${escapeHtml(timeLabel)}, ${escapeHtml(ageText)}${expiredNote})</span>`;
+                }).join(" &bull; ") || "Sin dispositivos sincronizados aún";
 
                 // Update select dropdown
                 const selector = document.getElementById("device-selector");
                 const currentSelected = selector.value;
                 selector.innerHTML = '<option value="ALL">🌐 Todos los Dispositivos (Combinado)</option>' +
-                    deviceKeys.map(k => `<option value="${k}">💻 ${k}</option>`).join("");
+                    deviceKeys.map(k => `<option value="${escapeHtml(k)}">💻 ${escapeHtml(k)}</option>`).join("");
                 if (deviceKeys.includes(currentSelected)) selector.value = currentSelected;
 
-                // Fetch each device JSON
+                // Fetch each device JSON in parallel
                 allDevicesData = {};
-                for (const key of deviceKeys) {
+                await Promise.all(deviceKeys.map(async (key) => {
                     try {
                         const devResp = await fetch(devices[key].file + '?t=' + Date.now());
                         if (devResp.ok) {
@@ -242,57 +310,91 @@
                     } catch (e) {
                         console.error("Error loading device " + key, e);
                     }
-                }
+                }));
 
-                document.getElementById("last-refresh-text").innerText = "Última sincronización en la nube: " + new Date().toLocaleString();
+                document.getElementById("last-refresh-text").textContent = "Última lectura del panel: " + new Date().toLocaleString();
                 renderView();
             } catch (err) {
                 console.warn("Esperando datos en GitHub...", err);
-                document.getElementById("last-refresh-text").innerText = "Aún no hay datos subidos a 'data/manifest.json'. Ejecuta el script exporter en tu PC.";
+                document.getElementById("last-refresh-text").textContent = "Aún no hay datos subidos a 'data/manifest.json'. Ejecuta el script exporter en tu PC.";
             }
         }
 
         function getActiveMetrics() {
             const selected = document.getElementById("device-selector").value;
-            if (selected !== "ALL" && allDevicesData[selected]) {
-                return allDevicesData[selected];
-            }
+            const devicesToMerge = (selected !== "ALL" && allDevicesData[selected])
+                ? [allDevicesData[selected]]
+                : Object.values(allDevicesData);
 
-            // Aggregate ALL devices
+            const nowMs = Date.now();
             const merged = {
                 last_5h: { requests: 0, input_tokens: 0, output_tokens: 0, cache_tokens: 0, models: {} },
                 last_7d: { requests: 0, input_tokens: 0, output_tokens: 0, cache_tokens: 0, models: {} },
-                last_14d_by_day: {}
+                last_24h_by_hour: {},
+                last_14d_by_day: {},
+                total_requests: 0,
+                total_tokens: 0,
+                expired_5h_devices: [],
+                expired_7d_devices: []
             };
 
-            for (const dev of Object.values(allDevicesData)) {
-                // 5h
-                merged.last_5h.requests += dev.last_5h.requests || 0;
-                merged.last_5h.input_tokens += dev.last_5h.input_tokens || 0;
-                merged.last_5h.output_tokens += dev.last_5h.output_tokens || 0;
-                merged.last_5h.cache_tokens += dev.last_5h.cache_tokens || 0;
-                for (const [m, vals] of Object.entries(dev.last_5h.models || {})) {
-                    if (!merged.last_5h.models[m]) merged.last_5h.models[m] = { requests: 0, input: 0, output: 0, cache: 0 };
-                    merged.last_5h.models[m].requests += vals.requests;
-                    merged.last_5h.models[m].input += vals.input;
-                    merged.last_5h.models[m].output += vals.output;
-                    merged.last_5h.models[m].cache += vals.cache;
+            for (const dev of devicesToMerge) {
+                const ageMs = getDeviceAgeMs(dev);
+                const devName = dev.device_id || "Equipo";
+
+                merged.total_requests += dev.total_requests || 0;
+                merged.total_tokens += dev.total_tokens || 0;
+
+                // 5h: solo sumar si la última sincronización fue hace <= 5 horas
+                if (ageMs <= FIVE_HOURS_MS && dev.last_5h) {
+                    merged.last_5h.requests += dev.last_5h.requests || 0;
+                    merged.last_5h.input_tokens += dev.last_5h.input_tokens || 0;
+                    merged.last_5h.output_tokens += dev.last_5h.output_tokens || 0;
+                    merged.last_5h.cache_tokens += dev.last_5h.cache_tokens || 0;
+                    for (const [m, vals] of Object.entries(dev.last_5h.models || {})) {
+                        if (!merged.last_5h.models[m]) merged.last_5h.models[m] = { requests: 0, input: 0, output: 0, cache: 0 };
+                        merged.last_5h.models[m].requests += vals.requests || 0;
+                        merged.last_5h.models[m].input += vals.input || 0;
+                        merged.last_5h.models[m].output += vals.output || 0;
+                        merged.last_5h.models[m].cache += vals.cache || 0;
+                    }
+                } else if (dev.last_5h && (dev.last_5h.requests || 0) > 0) {
+                    merged.expired_5h_devices.push(devName);
                 }
 
-                // 7d
-                merged.last_7d.requests += dev.last_7d.requests || 0;
-                merged.last_7d.input_tokens += dev.last_7d.input_tokens || 0;
-                merged.last_7d.output_tokens += dev.last_7d.output_tokens || 0;
-                merged.last_7d.cache_tokens += dev.last_7d.cache_tokens || 0;
-                for (const [m, vals] of Object.entries(dev.last_7d.models || {})) {
-                    if (!merged.last_7d.models[m]) merged.last_7d.models[m] = { requests: 0, input: 0, output: 0, cache: 0 };
-                    merged.last_7d.models[m].requests += vals.requests;
-                    merged.last_7d.models[m].input += vals.input;
-                    merged.last_7d.models[m].output += vals.output;
-                    merged.last_7d.models[m].cache += vals.cache;
+                // 7d: solo sumar si la última sincronización fue hace <= 7 días
+                if (ageMs <= SEVEN_DAYS_MS && dev.last_7d) {
+                    merged.last_7d.requests += dev.last_7d.requests || 0;
+                    merged.last_7d.input_tokens += dev.last_7d.input_tokens || 0;
+                    merged.last_7d.output_tokens += dev.last_7d.output_tokens || 0;
+                    merged.last_7d.cache_tokens += dev.last_7d.cache_tokens || 0;
+                    for (const [m, vals] of Object.entries(dev.last_7d.models || {})) {
+                        if (!merged.last_7d.models[m]) merged.last_7d.models[m] = { requests: 0, input: 0, output: 0, cache: 0 };
+                        merged.last_7d.models[m].requests += vals.requests || 0;
+                        merged.last_7d.models[m].input += vals.input || 0;
+                        merged.last_7d.models[m].output += vals.output || 0;
+                        merged.last_7d.models[m].cache += vals.cache || 0;
+                    }
+                } else if (dev.last_7d && (dev.last_7d.requests || 0) > 0) {
+                    merged.expired_7d_devices.push(devName);
                 }
 
-                // 14d
+                // 24h por hora (filtrando solo horas dentro de las últimas 24h reales)
+                for (const [hourKey, hVals] of Object.entries(dev.last_24h_by_hour || {})) {
+                    const ts = parseHourKeyToMs(hourKey);
+                    if (!Number.isFinite(ts) || (nowMs - ts) > TWENTY_FOUR_HOURS_MS) continue;
+                    const bucketKey = new Date(ts).toISOString().slice(0, 13) + ":00:00Z";
+                    if (!merged.last_24h_by_hour[bucketKey]) {
+                        merged.last_24h_by_hour[bucketKey] = { requests: 0, input: 0, output: 0, cache: 0 };
+                    }
+                    const target = merged.last_24h_by_hour[bucketKey];
+                    target.requests += hVals.requests || 0;
+                    target.input += hVals.input || 0;
+                    target.output += hVals.output || 0;
+                    target.cache += hVals.cache || 0;
+                }
+
+                // 14d por día
                 for (const [day, dVals] of Object.entries(dev.last_14d_by_day || {})) {
                     if (!merged.last_14d_by_day[day]) merged.last_14d_by_day[day] = { requests: 0, input: 0, output: 0, cache: 0, models: {} };
                     const target = merged.last_14d_by_day[day];
@@ -308,17 +410,82 @@
             return merged;
         }
 
+        function renderModelsTable(tbodyId, modelsObj, emptyMessage) {
+            const tbody = document.getElementById(tbodyId);
+            const entries = Object.entries(modelsObj || {}).sort((a, b) => (b[1].requests || 0) - (a[1].requests || 0));
+            if (entries.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" class="text-muted" style="text-align:center;">${escapeHtml(emptyMessage)}</td></tr>`;
+                return;
+            }
+            tbody.innerHTML = entries.map(([m, vals]) => `
+                <tr>
+                    <td style="font-weight:600;">${escapeHtml(m)}</td>
+                    <td><span class="badge blue">${formatNum(vals.requests)}</span></td>
+                    <td>${formatNum(vals.input)}</td>
+                    <td>${formatNum(vals.output)}</td>
+                    <td class="text-muted">${formatNum(vals.cache)}</td>
+                </tr>
+            `).join("");
+        }
+
+        function renderHourlyChart(hourlyData) {
+            const chart = document.getElementById("hourly-chart");
+            chart.innerHTML = "";
+
+            // Construir las últimas 24 horas exactas hasta la hora actual
+            const now = new Date();
+            now.setMinutes(0, 0, 0);
+            const slots = [];
+            for (let i = 23; i >= 0; i--) {
+                const slotDate = new Date(now.getTime() - i * 3600 * 1000);
+                const isoKey = slotDate.toISOString().slice(0, 13) + ":00:00Z";
+                const stats = hourlyData[isoKey] || { requests: 0, input: 0, output: 0, cache: 0 };
+                slots.push({ date: slotDate, stats });
+            }
+
+            const maxVal = Math.max(...slots.map(s => s.stats.requests), 1);
+
+            slots.forEach(({ date, stats }, idx) => {
+                const hasData = stats.requests > 0;
+                const heightPct = hasData ? Math.max(8, Math.round((stats.requests / maxVal) * 100)) : 4;
+                const localHour = String(date.getHours()).padStart(2, "0") + ":00";
+                const localDay = date.toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit' });
+                const showLabel = idx % 2 === 0 || idx === slots.length - 1;
+
+                const col = document.createElement("div");
+                col.className = "chart-col";
+                col.innerHTML = `
+                    <div class="tooltip">${escapeHtml(localDay)} ${escapeHtml(localHour)}<br><strong>${formatNum(stats.requests)}</strong> peticiones<br>${formatNum(stats.input + stats.output)} tokens</div>
+                    <div class="chart-bar ${hasData ? 'hourly' : 'empty'}" style="height: ${heightPct}%;"></div>
+                    <div class="chart-label">${showLabel ? escapeHtml(localHour) : '&nbsp;'}</div>
+                `;
+                chart.appendChild(col);
+            });
+        }
+
         function renderView() {
             const data = getActiveMetrics();
+
+            // Total histórico
+            document.getElementById("total-historical-pill").innerHTML =
+                `Total histórico: <strong>${formatNum(data.total_requests)}</strong> pet. · <strong>${formatNum(data.total_tokens)}</strong> tokens`;
 
             // 5 Hours
             const req5h = data.last_5h.requests;
             const in5h = data.last_5h.input_tokens;
             const out5h = data.last_5h.output_tokens;
-            document.getElementById("val-req-5h").innerText = formatNum(req5h);
+            document.getElementById("val-req-5h").textContent = formatNum(req5h);
             document.getElementById("val-tokens-5h").innerHTML = `<strong>${formatNum(in5h + out5h)}</strong> tokens totales (${formatNum(in5h)} in / ${formatNum(out5h)} out)`;
 
-            const limit5h = parseInt(document.getElementById("limit-5h").value) || 1;
+            const staleNote5h = document.getElementById("stale-note-5h");
+            if (data.expired_5h_devices.length > 0) {
+                staleNote5h.style.display = "block";
+                staleNote5h.textContent = `Ventana de 5h expirada (excluida por inactividad >5h): ${data.expired_5h_devices.join(", ")}`;
+            } else {
+                staleNote5h.style.display = "none";
+            }
+
+            const limit5h = Math.max(1, parseInt(document.getElementById("limit-5h").value, 10) || 1);
             const pct5h = Math.min(100, Math.round((req5h / limit5h) * 100));
             const rem5h = Math.max(0, limit5h - req5h);
             const bar5h = document.getElementById("bar-5h");
@@ -326,31 +493,24 @@
             bar5h.className = "progress-bar-fill " + (pct5h > 90 ? "danger" : (pct5h > 70 ? "warning" : "normal"));
             document.getElementById("label-remaining-5h").innerHTML = `Restante: <strong>${formatNum(rem5h)}</strong> (${100 - pct5h}%)`;
 
-            // 5h Models Table
-            const body5h = document.getElementById("models-5h-body");
-            const models5hEntries = Object.entries(data.last_5h.models || {});
-            if (models5hEntries.length === 0) {
-                body5h.innerHTML = `<tr><td colspan="5" class="text-muted" style="text-align:center;">Sin actividad en las últimas 5 horas</td></tr>`;
-            } else {
-                body5h.innerHTML = models5hEntries.map(([m, vals]) => `
-                    <tr>
-                        <td style="font-weight:600;">${m}</td>
-                        <td><span class="badge blue">${formatNum(vals.requests)}</span></td>
-                        <td>${formatNum(vals.input)}</td>
-                        <td>${formatNum(vals.output)}</td>
-                        <td class="text-muted">${formatNum(vals.cache)}</td>
-                    </tr>
-                `).join("");
-            }
+            renderModelsTable("models-5h-body", data.last_5h.models, "Sin actividad en las últimas 5 horas");
 
             // 7 Days
             const req7d = data.last_7d.requests;
             const in7d = data.last_7d.input_tokens;
             const out7d = data.last_7d.output_tokens;
-            document.getElementById("val-req-7d").innerText = formatNum(req7d);
+            document.getElementById("val-req-7d").textContent = formatNum(req7d);
             document.getElementById("val-tokens-7d").innerHTML = `<strong>${formatNum(in7d + out7d)}</strong> tokens totales (${formatNum(in7d)} in / ${formatNum(out7d)} out)`;
 
-            const limit7d = parseInt(document.getElementById("limit-7d").value) || 1;
+            const staleNote7d = document.getElementById("stale-note-7d");
+            if (data.expired_7d_devices.length > 0) {
+                staleNote7d.style.display = "block";
+                staleNote7d.textContent = `Ventana de 7d expirada (excluida por inactividad >7d): ${data.expired_7d_devices.join(", ")}`;
+            } else {
+                staleNote7d.style.display = "none";
+            }
+
+            const limit7d = Math.max(1, parseInt(document.getElementById("limit-7d").value, 10) || 1);
             const pct7d = Math.min(100, Math.round((req7d / limit7d) * 100));
             const rem7d = Math.max(0, limit7d - req7d);
             const bar7d = document.getElementById("bar-7d");
@@ -358,25 +518,13 @@
             bar7d.className = "progress-bar-fill " + (pct7d > 90 ? "danger" : (pct7d > 70 ? "warning" : "normal"));
             document.getElementById("label-remaining-7d").innerHTML = `Restante: <strong>${formatNum(rem7d)}</strong> (${100 - pct7d}%)`;
 
-            // 7d Models Table
-            const body7d = document.getElementById("models-7d-body");
-            const models7dEntries = Object.entries(data.last_7d.models || {});
-            if (models7dEntries.length === 0) {
-                body7d.innerHTML = `<tr><td colspan="5" class="text-muted" style="text-align:center;">Sin actividad en los últimos 7 días</td></tr>`;
-            } else {
-                body7d.innerHTML = models7dEntries.map(([m, vals]) => `
-                    <tr>
-                        <td style="font-weight:600;">${m}</td>
-                        <td><span class="badge blue">${formatNum(vals.requests)}</span></td>
-                        <td>${formatNum(vals.input)}</td>
-                        <td>${formatNum(vals.output)}</td>
-                        <td class="text-muted">${formatNum(vals.cache)}</td>
-                    </tr>
-                `).join("");
-            }
+            renderModelsTable("models-7d-body", data.last_7d.models, "Sin actividad en los últimos 7 días");
+
+            // 24h hourly chart
+            renderHourlyChart(data.last_24h_by_hour || {});
 
             // Daily chart & table
-            const daysEntries = Object.entries(data.last_14d_by_day || {}).sort((a,b) => a[0].localeCompare(b[0]));
+            const daysEntries = Object.entries(data.last_14d_by_day || {}).sort((a, b) => a[0].localeCompare(b[0]));
             const chart = document.getElementById("daily-chart");
             chart.innerHTML = "";
             const maxVal = Math.max(...daysEntries.map(e => e[1].requests), 1);
@@ -386,23 +534,24 @@
                 const col = document.createElement("div");
                 col.className = "chart-col";
                 col.innerHTML = `
-                    <div class="tooltip">${day}<br><strong>${formatNum(d.requests)}</strong> peticiones<br>${formatNum(d.input + d.output)} tokens</div>
+                    <div class="tooltip">${escapeHtml(day)}<br><strong>${formatNum(d.requests)}</strong> peticiones<br>${formatNum(d.input + d.output)} tokens</div>
                     <div class="chart-bar" style="height: ${heightPct}%;"></div>
-                    <div class="chart-label">${day.substring(5)}</div>
+                    <div class="chart-label">${escapeHtml(day.substring(5))}</div>
                 `;
                 chart.appendChild(col);
             });
 
-            // Daily table
             const daysTableBody = document.getElementById("days-table-body");
             if (daysEntries.length === 0) {
                 daysTableBody.innerHTML = `<tr><td colspan="6" class="text-muted" style="text-align:center;">Sin datos diarios disponibles</td></tr>`;
             } else {
                 daysTableBody.innerHTML = daysEntries.slice().reverse().map(([day, d]) => {
-                    const modelsText = Object.entries(d.models || {}).map(([m, cnt]) => `<strong>${m}</strong>: ${cnt}`).join(", ");
+                    const modelsText = Object.entries(d.models || {})
+                        .map(([m, cnt]) => `<strong>${escapeHtml(m)}</strong>: ${formatNum(cnt)}`)
+                        .join(", ");
                     return `
                         <tr>
-                            <td><strong>${day}</strong></td>
+                            <td><strong>${escapeHtml(day)}</strong></td>
                             <td><span class="badge gray">${formatNum(d.requests)}</span></td>
                             <td>${formatNum(d.input)}</td>
                             <td>${formatNum(d.output)}</td>

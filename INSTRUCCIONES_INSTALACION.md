@@ -45,7 +45,7 @@ Para evitar que OneDrive bloquee archivos en ejecución, copia la carpeta `antig
    * Pulsa `Enter`.
 4. **¡Listo!** El instalador:
    * Realizará la primera sincronización con GitHub.
-   * Registrará la tarea de Windows para que se ejecute en segundo plano **automáticamente cada 1 hora**.
+   * Registrará la tarea de Windows para que se ejecute en segundo plano sin ventana **automáticamente cada 30 minutos**.
 
 ---
 
@@ -66,7 +66,7 @@ Si prefieres usar los archivos de la raíz del proyecto:
    ```bash
    python exporter.py
    ```
-4. Registra la tarea programada horaria en PowerShell:
+4. Registra la tarea programada cada 30 minutos en PowerShell:
    ```powershell
    powershell -ExecutionPolicy Bypass -File register_hourly_task.ps1
    ```

@@ -58,7 +58,7 @@ En cada PC donde uses Antigravity:
    ```bash
    python exporter.py
    ```
-3. Activa la sincronización horaria automática ejecutando en PowerShell:
+3. Activa la sincronización automática cada 30 minutos (en segundo plano con `pythonw.exe`) ejecutando en PowerShell:
    ```powershell
    powershell -ExecutionPolicy Bypass -File register_hourly_task.ps1
    ```
