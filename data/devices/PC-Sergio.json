@@ -1,0 +1,171 @@
+{
+  "device_id": "PC-Sergio",
+  "updated_at": "2026-11-25T12:10:40.700735+00:00",
+  "last_5h": {
+    "requests": 590,
+    "input_tokens": 3356098,
+    "output_tokens": 425497,
+    "cache_tokens": 72785199,
+    "models": {
+      "gemini-3.8-flash-medium": {
+        "requests": 590,
+        "input": 3356098,
+        "output": 425497,
+        "cache": 72785199
+      }
+    }
+  },
+  "last_7d": {
+    "requests": 2909,
+    "input_tokens": 13307014,
+    "output_tokens": 1690579,
+    "cache_tokens": 363307604,
+    "models": {
+      "gemini-3.8-flash-medium": {
+        "requests": 2892,
+        "input": 13227711,
+        "output": 1680077,
+        "cache": 363044389
+      },
+      "gemini-4-hydrogen-tiered-high": {
+        "requests": 17,
+        "input": 79303,
+        "output": 10502,
+        "cache": 263215
+      }
+    }
+  },
+  "last_24h_by_hour": {
+    "2026-11-24 12:00": {
+      "requests": 101,
+      "input": 331191,
+      "output": 67515,
+      "cache": 10404177
+    },
+    "2026-11-25 08:00": {
+      "requests": 103,
+      "input": 695473,
+      "output": 77746,
+      "cache": 14335872
+    },
+    "2026-11-25 09:00": {
+      "requests": 205,
+      "input": 993148,
+      "output": 150951,
+      "cache": 21987678
+    },
+    "2026-11-25 10:00": {
+      "requests": 158,
+      "input": 882560,
+      "output": 97985,
+      "cache": 23750852
+    },
+    "2026-11-25 11:00": {
+      "requests": 115,
+      "input": 675352,
+      "output": 97410,
+      "cache": 11995168
+    },
+    "2026-11-25 12:00": {
+      "requests": 9,
+      "input": 109565,
+      "output": 1405,
+      "cache": 715629
+    }
+  },
+  "last_14d_by_day": {
+    "2026-11-12": {
+      "requests": 29,
+      "input": 223029,
+      "output": 20374,
+      "cache": 4494937,
+      "models": {
+        "desconocido": 29
+      }
+    },
+    "2026-11-24": {
+      "requests": 980,
+      "input": 4516329,
+      "output": 542148,
+      "cache": 123797194,
+      "models": {
+        "gemini-3.8-flash-medium": 980
+      }
+    },
+    "2026-11-19": {
+      "requests": 491,
+      "input": 2225785,
+      "output": 311740,
+      "cache": 63579709,
+      "models": {
+        "gemini-3.8-flash-medium": 474,
+        "gemini-4-hydrogen-tiered-high": 17
+      }
+    },
+    "2026-11-13": {
+      "requests": 355,
+      "input": 1716502,
+      "output": 194055,
+      "cache": 39503651,
+      "models": {
+        "desconocido": 355
+      }
+    },
+    "2026-11-16": {
+      "requests": 129,
+      "input": 394548,
+      "output": 81184,
+      "cache": 12714054,
+      "models": {
+        "gemini-3.8-flash-medium": 129
+      }
+    },
+    "2026-11-17": {
+      "requests": 376,
+      "input": 2446481,
+      "output": 301160,
+      "cache": 52271072,
+      "models": {
+        "gemini-3.8-flash-medium": 376
+      }
+    },
+    "2026-11-18": {
+      "requests": 713,
+      "input": 2998360,
+      "output": 481831,
+      "cache": 88226996,
+      "models": {
+        "gemini-3.8-flash-medium": 713
+      }
+    },
+    "2026-11-20": {
+      "requests": 184,
+      "input": 982911,
+      "output": 100143,
+      "cache": 22540922,
+      "models": {
+        "gemini-3.8-flash-medium": 184
+      }
+    },
+    "2026-11-25": {
+      "requests": 590,
+      "input": 3356098,
+      "output": 425497,
+      "cache": 72785199,
+      "models": {
+        "gemini-3.8-flash-medium": 590
+      }
+    },
+    "2026-11-23": {
+      "requests": 524,
+      "input": 1830540,
+      "output": 258097,
+      "cache": 64184963,
+      "models": {
+        "gemini-3.8-flash-medium": 524
+      }
+    }
+  },
+  "total_requests": 6759,
+  "total_tokens": 37420437
+}
