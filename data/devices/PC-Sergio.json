@@ -1,31 +1,31 @@
 {
   "device_id": "PC-Sergio",
-  "updated_at": "2026-11-25T12:10:40.700735+00:00",
+  "updated_at": "2026-11-25T12:33:28.054532+00:00",
   "last_5h": {
-    "requests": 590,
-    "input_tokens": 3356098,
-    "output_tokens": 425497,
-    "cache_tokens": 72785199,
+    "requests": 616,
+    "input_tokens": 3520046,
+    "output_tokens": 436133,
+    "cache_tokens": 75328203,
     "models": {
       "gemini-3.8-flash-medium": {
-        "requests": 590,
-        "input": 3356098,
-        "output": 425497,
-        "cache": 72785199
+        "requests": 616,
+        "input": 3520046,
+        "output": 436133,
+        "cache": 75328203
       }
     }
   },
   "last_7d": {
-    "requests": 2909,
-    "input_tokens": 13307014,
-    "output_tokens": 1690579,
-    "cache_tokens": 363307604,
+    "requests": 2933,
+    "input_tokens": 13465130,
+    "output_tokens": 1697971,
+    "cache_tokens": 365415717,
     "models": {
       "gemini-3.8-flash-medium": {
-        "requests": 2892,
-        "input": 13227711,
-        "output": 1680077,
-        "cache": 363044389
+        "requests": 2916,
+        "input": 13385827,
+        "output": 1687469,
+        "cache": 365152502
       },
       "gemini-4-hydrogen-tiered-high": {
         "requests": 17,
@@ -36,12 +36,6 @@
     }
   },
   "last_24h_by_hour": {
-    "2026-11-24 12:00": {
-      "requests": 101,
-      "input": 331191,
-      "output": 67515,
-      "cache": 10404177
-    },
     "2026-11-25 08:00": {
       "requests": 103,
       "input": 695473,
@@ -67,10 +61,10 @@
       "cache": 11995168
     },
     "2026-11-25 12:00": {
-      "requests": 9,
-      "input": 109565,
-      "output": 1405,
-      "cache": 715629
+      "requests": 35,
+      "input": 273513,
+      "output": 12041,
+      "cache": 3258633
     }
   },
   "last_14d_by_day": {
@@ -148,12 +142,12 @@
       }
     },
     "2026-11-25": {
-      "requests": 590,
-      "input": 3356098,
-      "output": 425497,
-      "cache": 72785199,
+      "requests": 616,
+      "input": 3520046,
+      "output": 436133,
+      "cache": 75328203,
       "models": {
-        "gemini-3.8-flash-medium": 590
+        "gemini-3.8-flash-medium": 616
       }
     },
     "2026-11-23": {
@@ -166,6 +160,6 @@
       }
     }
   },
-  "total_requests": 6759,
-  "total_tokens": 37420437
+  "total_requests": 6785,
+  "total_tokens": 37595021
 }
