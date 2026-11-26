@@ -1,6 +1,6 @@
 {
   "device_id": "ADMINISTRATOR",
-  "updated_at": "2026-11-26T13:47:56.794445+00:00",
+  "updated_at": "2026-11-26T14:17:56.799915+00:00",
   "last_5h": {
     "requests": 7,
     "input_tokens": 151195,
@@ -49,10 +49,10 @@
   },
   "last_24h_by_hour": {
     "2026-11-25T14:00:00Z": {
-      "requests": 18,
-      "input": 101769,
-      "output": 32785,
-      "cache": 1009242
+      "requests": 14,
+      "input": 53187,
+      "output": 28194,
+      "cache": 929496
     },
     "2026-11-25T15:00:00Z": {
       "requests": 39,
