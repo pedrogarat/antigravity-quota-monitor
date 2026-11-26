@@ -1,31 +1,24 @@
 {
   "device_id": "PC-Sergio",
-  "updated_at": "2026-11-25T12:33:28.054532+00:00",
+  "updated_at": "2026-11-26T07:51:42.309333+00:00",
   "last_5h": {
-    "requests": 616,
-    "input_tokens": 3520046,
-    "output_tokens": 436133,
-    "cache_tokens": 75328203,
-    "models": {
-      "gemini-3.8-flash-medium": {
-        "requests": 616,
-        "input": 3520046,
-        "output": 436133,
-        "cache": 75328203
-      }
-    }
+    "requests": 0,
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "cache_tokens": 0,
+    "models": {}
   },
   "last_7d": {
-    "requests": 2933,
-    "input_tokens": 13465130,
-    "output_tokens": 1697971,
-    "cache_tokens": 365415717,
+    "requests": 2804,
+    "input_tokens": 13086812,
+    "output_tokens": 1651185,
+    "cache_tokens": 350460501,
     "models": {
       "gemini-3.8-flash-medium": {
-        "requests": 2916,
-        "input": 13385827,
-        "output": 1687469,
-        "cache": 365152502
+        "requests": 2787,
+        "input": 13007509,
+        "output": 1640683,
+        "cache": 350197286
       },
       "gemini-4-hydrogen-tiered-high": {
         "requests": 17,
@@ -61,10 +54,10 @@
       "cache": 11995168
     },
     "2026-11-25 12:00": {
-      "requests": 35,
-      "input": 273513,
-      "output": 12041,
-      "cache": 3258633
+      "requests": 47,
+      "input": 416611,
+      "output": 17109,
+      "cache": 4521559
     }
   },
   "last_14d_by_day": {
@@ -142,12 +135,12 @@
       }
     },
     "2026-11-25": {
-      "requests": 616,
-      "input": 3520046,
-      "output": 436133,
-      "cache": 75328203,
+      "requests": 628,
+      "input": 3663144,
+      "output": 441201,
+      "cache": 76591129,
       "models": {
-        "gemini-3.8-flash-medium": 616
+        "gemini-3.8-flash-medium": 628
       }
     },
     "2026-11-23": {
@@ -160,6 +153,6 @@
       }
     }
   },
-  "total_requests": 6785,
-  "total_tokens": 37595021
+  "total_requests": 6797,
+  "total_tokens": 37743187
 }
