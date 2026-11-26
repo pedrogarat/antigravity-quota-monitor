@@ -1,7 +1,7 @@
 {
   "devices": {
     "PC-Sergio": {
-      "updated_at": "2026-11-26T11:54:59.219495+00:00",
+      "updated_at": "2026-11-26T12:24:59.222724+00:00",
       "file": "data/devices/PC-Sergio.json"
     },
     "ADMINISTRATOR": {
@@ -9,5 +9,5 @@
       "file": "data/devices/ADMINISTRATOR.json"
     }
   },
-  "last_sync": "2026-11-26T12:17:56.764958+00:00"
+  "last_sync": "2026-11-26T12:24:59.222724+00:00"
 }
