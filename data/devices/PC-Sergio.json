@@ -1,6 +1,6 @@
 {
   "device_id": "PC-Sergio",
-  "updated_at": "2026-11-27T10:24:59.474221+00:00",
+  "updated_at": "2026-11-27T10:54:59.485526+00:00",
   "last_5h": {
     "requests": 8,
     "input_tokens": 45909,
@@ -30,12 +30,6 @@
     }
   },
   "last_24h_by_hour": {
-    "2026-11-26T10:00:00Z": {
-      "requests": 8,
-      "input": 169252,
-      "output": 2209,
-      "cache": 1045715
-    },
     "2026-11-26T11:00:00Z": {
       "requests": 127,
       "input": 705702,
