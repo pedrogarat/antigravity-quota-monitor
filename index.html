@@ -27,10 +27,14 @@
         h1 { font-size: 1.6rem; font-weight: 700; color: #fff; display: flex; align-items: center; gap: 10px; }
         .badge-live { background: rgba(52, 211, 153, 0.15); color: var(--success); padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 600; text-transform: uppercase; border: 1px solid rgba(52, 211, 153, 0.3); }
         
-        .header-actions { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
-        .select-device { background: var(--surface); border: 1px solid var(--border); color: #fff; padding: 8px 12px; border-radius: 8px; font-size: 0.9rem; font-weight: 600; outline: none; cursor: pointer; }
+        .header-actions { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+        .select-device { background: var(--surface); border: 1px solid var(--border); color: #fff; padding: 8px 12px; border-radius: 8px; font-size: 0.88rem; font-weight: 600; outline: none; cursor: pointer; }
         .btn { background: var(--primary); color: #0b0f19; border: none; padding: 8px 16px; border-radius: 8px; font-weight: 600; cursor: pointer; transition: 0.2s; font-size: 0.88rem; display: inline-flex; align-items: center; gap: 6px; }
         .btn:hover { opacity: 0.9; }
+        .btn-mini { background: rgba(56, 189, 248, 0.18); color: var(--primary); border: 1px solid rgba(56, 189, 248, 0.35); padding: 4px 10px; border-radius: 6px; font-weight: 600; cursor: pointer; font-size: 0.78rem; }
+        .btn-mini:hover { background: rgba(56, 189, 248, 0.28); }
+        .btn-mini.ghost { background: rgba(148, 163, 184, 0.12); color: var(--text-muted); border-color: var(--border); }
+        .btn-mini.ghost:hover { color: #fff; }
 
         .sync-bar { display: flex; align-items: center; justify-content: space-between; gap: 16px; background: rgba(15, 23, 42, 0.6); border: 1px solid var(--border); padding: 10px 16px; border-radius: 8px; margin-bottom: 24px; font-size: 0.85rem; color: var(--text-muted); flex-wrap: wrap; }
         .sync-devices-wrap { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
@@ -42,13 +46,15 @@
 
         .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(360px, 1fr)); gap: 20px; margin-bottom: 24px; }
         .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--card-radius); padding: 22px; }
-        .card-header { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 14px; gap: 10px; flex-wrap: wrap; }
+        .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; gap: 10px; flex-wrap: wrap; }
         .card-title { font-size: 1.15rem; font-weight: 700; color: #fff; display: flex; align-items: center; gap: 8px; }
-        .card-badge { font-size: 0.8rem; color: var(--text-muted); background: rgba(255,255,255,0.05); padding: 3px 8px; border-radius: 6px; }
+        .card-badge { font-size: 0.8rem; color: var(--text-muted); background: rgba(255,255,255,0.05); padding: 3px 9px; border-radius: 6px; }
+        .card-badge.reset { background: rgba(52, 211, 153, 0.14); color: var(--success); border: 1px solid rgba(52, 211, 153, 0.28); font-weight: 600; }
 
         .metric-big { font-size: 2.4rem; font-weight: 800; color: #fff; letter-spacing: -0.5px; }
-        .metric-sub { color: var(--text-muted); font-size: 0.9rem; margin-bottom: 18px; }
-        .stale-note { color: var(--warning); font-size: 0.8rem; margin-top: -12px; margin-bottom: 14px; }
+        .metric-sub { color: var(--text-muted); font-size: 0.9rem; margin-bottom: 14px; }
+        .cycle-info { font-size: 0.78rem; color: var(--text-muted); margin-bottom: 14px; }
+        .stale-note { color: var(--warning); font-size: 0.8rem; margin-top: -8px; margin-bottom: 12px; }
 
         .progress-box { background: rgba(11, 15, 25, 0.7); padding: 16px; border-radius: 10px; border: 1px solid var(--border); margin-bottom: 20px; }
         .progress-header { display: flex; justify-content: space-between; font-size: 0.88rem; font-weight: 600; margin-bottom: 8px; }
@@ -58,8 +64,13 @@
         .progress-bar-fill.warning { background: linear-gradient(90deg, #fbbf24, #f59e0b); }
         .progress-bar-fill.danger { background: linear-gradient(90deg, #f87171, #ef4444); }
         
-        .quota-controls { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 14px; align-items: center; font-size: 0.85rem; color: var(--text-muted); }
-        .quota-controls input { background: #0b0f19; border: 1px solid var(--border); color: #fff; padding: 6px 10px; border-radius: 6px; width: 120px; font-weight: 600; }
+        .quota-controls { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 12px; align-items: center; font-size: 0.83rem; color: var(--text-muted); }
+        .quota-controls input[type="number"], .quota-controls input[type="time"], .quota-controls select {
+            background: #0b0f19; border: 1px solid var(--border); color: #fff; padding: 5px 8px; border-radius: 6px; font-weight: 600; font-size: 0.82rem;
+        }
+        .quota-controls input[type="number"] { width: 92px; }
+        .quota-controls input.tiny { width: 52px; text-align: center; }
+        .reset-row { margin-top: 10px; padding-top: 10px; border-top: 1px dashed rgba(34, 48, 77, 0.8); display: flex; flex-wrap: wrap; gap: 8px; align-items: center; font-size: 0.8rem; color: var(--text-muted); }
 
         table { width: 100%; border-collapse: collapse; font-size: 0.88rem; text-align: left; }
         th { padding: 10px 12px; border-bottom: 1px solid var(--border); color: var(--text-muted); font-weight: 600; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.5px; }
@@ -101,6 +112,11 @@
                 </p>
             </div>
             <div class="header-actions">
+                <select class="select-device" id="pool-selector" onchange="renderView()" title="Filtrar por bolsa de cuota de Antigravity">
+                    <option value="ALL">✨ Todos los Modelos</option>
+                    <option value="GEMINI">💎 Gemini Models</option>
+                    <option value="CLAUDE_GPT">🤖 Claude y GPT</option>
+                </select>
                 <select class="select-device" id="device-selector" onchange="renderView()">
                     <option value="ALL">🌐 Todos los Dispositivos (Combinado)</option>
                 </select>
@@ -120,29 +136,37 @@
             <!-- TARJETA 5 HORAS -->
             <div class="card">
                 <div class="card-header">
-                    <span class="card-title">⏱️ Ventana Últimas 5 Horas</span>
-                    <span class="card-badge">Ventana Móvil</span>
+                    <span class="card-title">⏱️ Ciclo de 5 Horas</span>
+                    <span class="card-badge reset" id="badge-reset-5h">Calculando...</span>
                 </div>
                 <div class="metric-big"><span id="val-req-5h">0</span> <span style="font-size: 1.1rem; color: var(--text-muted); font-weight: 500;">peticiones</span></div>
                 <div class="metric-sub" id="val-tokens-5h">0 tokens totales</div>
+                <div class="cycle-info" id="cycle-info-5h"></div>
                 <div class="stale-note" id="stale-note-5h" style="display: none;"></div>
 
                 <div class="progress-box">
                     <div class="progress-header">
-                        <span>Peticiones Usadas</span>
+                        <span>Peticiones en Ciclo Actual</span>
                         <span id="label-remaining-5h">Calculando...</span>
                     </div>
                     <div class="progress-bar-bg">
                         <div class="progress-bar-fill normal" id="bar-5h" style="width: 0%;"></div>
                     </div>
                     <div class="quota-controls">
-                        <label for="limit-5h">Tu cuota límite (5h):</label>
+                        <label for="limit-5h">Límite (5h):</label>
                         <input type="number" id="limit-5h" value="1000" step="50" min="1" oninput="updateLimits()">
                         <span>peticiones</span>
                     </div>
+                    <div class="reset-row">
+                        <span>Sincronizar View Usage:</span>
+                        <input type="number" id="sync-5h-h" class="tiny" min="0" max="5" placeholder="3"><span>h</span>
+                        <input type="number" id="sync-5h-m" class="tiny" min="0" max="59" placeholder="10"><span>m</span>
+                        <button class="btn-mini" onclick="applyManual5hReset()">Fijar</button>
+                        <button class="btn-mini ghost" onclick="clearManual5hReset()" title="Volver a detección automática">Auto</button>
+                    </div>
                 </div>
 
-                <div class="card-title" style="font-size: 0.95rem; margin-bottom: 10px;">Desglose por Modelo (5h)</div>
+                <div class="card-title" style="font-size: 0.95rem; margin-bottom: 10px;">Desglose por Modelo (Ciclo 5h)</div>
                 <table>
                     <thead>
                         <tr>
@@ -157,32 +181,50 @@
                 </table>
             </div>
 
-            <!-- TARJETA 7 DÍAS -->
+            <!-- TARJETA SEMANAL -->
             <div class="card">
                 <div class="card-header">
-                    <span class="card-title">📅 Ventana Últimos 7 Días</span>
-                    <span class="card-badge">Ventana Móvil Semanal</span>
+                    <span class="card-title">📅 Ciclo Semanal</span>
+                    <span class="card-badge reset" id="badge-reset-7d">Calculando...</span>
                 </div>
                 <div class="metric-big"><span id="val-req-7d">0</span> <span style="font-size: 1.1rem; color: var(--text-muted); font-weight: 500;">peticiones</span></div>
                 <div class="metric-sub" id="val-tokens-7d">0 tokens totales</div>
+                <div class="cycle-info" id="cycle-info-7d"></div>
                 <div class="stale-note" id="stale-note-7d" style="display: none;"></div>
 
                 <div class="progress-box">
                     <div class="progress-header">
-                        <span>Peticiones Semanales Usadas</span>
+                        <span>Peticiones en Semana Actual</span>
                         <span id="label-remaining-7d">Calculando...</span>
                     </div>
                     <div class="progress-bar-bg">
                         <div class="progress-bar-fill normal" id="bar-7d" style="width: 0%;"></div>
                     </div>
                     <div class="quota-controls">
-                        <label for="limit-7d">Tu cuota límite (7d):</label>
+                        <label for="limit-7d">Límite semanal:</label>
                         <input type="number" id="limit-7d" value="10000" step="500" min="1" oninput="updateLimits()">
                         <span>peticiones</span>
                     </div>
+                    <div class="reset-row">
+                        <span>Reseteo:</span>
+                        <select id="weekly-reset-day" onchange="updateWeeklyResetFromPicker()">
+                            <option value="1">Lunes</option>
+                            <option value="2">Martes</option>
+                            <option value="3" selected>Miércoles</option>
+                            <option value="4">Jueves</option>
+                            <option value="5">Viernes</option>
+                            <option value="6">Sábado</option>
+                            <option value="0">Domingo</option>
+                        </select>
+                        <input type="time" id="weekly-reset-time" value="08:10" onchange="updateWeeklyResetFromPicker()">
+                        <span>| ó en</span>
+                        <input type="number" id="sync-7d-d" class="tiny" min="0" max="6" placeholder="5"><span>d</span>
+                        <input type="number" id="sync-7d-h" class="tiny" min="0" max="23" placeholder="9"><span>h</span>
+                        <button class="btn-mini" onclick="applyWeeklyResetFromCountdown()">Ajustar</button>
+                    </div>
                 </div>
 
-                <div class="card-title" style="font-size: 0.95rem; margin-bottom: 10px;">Desglose por Modelo (7d)</div>
+                <div class="card-title" style="font-size: 0.95rem; margin-bottom: 10px;">Desglose por Modelo (Semana Actual)</div>
                 <table>
                     <thead>
                         <tr>
@@ -256,8 +298,8 @@
 
             <div id="projects-unlocked-view" style="display: none;">
                 <div class="tabs">
-                    <button class="tab-btn active" data-range="last_5h" onclick="setProjectsRange('last_5h')">Últimas 5h</button>
-                    <button class="tab-btn" data-range="last_7d" onclick="setProjectsRange('last_7d')">Últimos 7 días</button>
+                    <button class="tab-btn" data-range="last_5h" onclick="setProjectsRange('last_5h')">Últimas 5h</button>
+                    <button class="tab-btn active" data-range="last_7d" onclick="setProjectsRange('last_7d')">Últimos 7 días</button>
                     <button class="tab-btn" data-range="last_14d" onclick="setProjectsRange('last_14d')">Últimos 14 días</button>
                     <button class="tab-btn" data-range="total" onclick="setProjectsRange('total')">Histórico total</button>
                 </div>
@@ -282,15 +324,182 @@
     </div>
 
     <script>
-        const FIVE_HOURS_MS = 5 * 60 * 60 * 1000;
-        const SEVEN_DAYS_MS = 7 * 24 * 60 * 60 * 1000;
-        const TWENTY_FOUR_HOURS_MS = 24 * 60 * 60 * 1000;
+        const HOUR_MS = 60 * 60 * 1000;
+        const FIVE_HOURS_MS = 5 * HOUR_MS;
+        const SEVEN_DAYS_MS = 7 * 24 * HOUR_MS;
+        const TWENTY_FOUR_HOURS_MS = 24 * HOUR_MS;
         const FRESH_SYNC_MS = 65 * 60 * 1000;
+
+        // Reseteo semanal por defecto basado en View Usage (Miércoles 08:10 hora local)
+        const DEFAULT_WEEKLY_RESET_DAY = 3; // 0=Dom, 1=Lun, 2=Mar, 3=Mié, 4=Jue, 5=Vie, 6=Sáb
+        const DEFAULT_WEEKLY_RESET_TIME = "08:10";
 
         let allDevicesData = {};
         let unlockedPin = null;
         let decryptedProjectsByDevice = {};
         let activeProjectsRange = "last_7d";
+
+        function escapeHtml(value) {
+            return String(value ?? "")
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#39;");
+        }
+
+        function formatNum(n) {
+            return (n || 0).toLocaleString('es-ES');
+        }
+
+        function formatRelativeAge(ageMs) {
+            if (!Number.isFinite(ageMs) || ageMs < 0) return "ahora";
+            const mins = Math.floor(ageMs / 60000);
+            if (mins < 1) return "hace <1 min";
+            if (mins < 60) return `hace ${mins} min`;
+            const hours = Math.floor(mins / 60);
+            if (hours < 24) return `hace ${hours} h`;
+            const days = Math.floor(hours / 24);
+            return `hace ${days} d`;
+        }
+
+        function formatCountdown(ms) {
+            if (!Number.isFinite(ms) || ms <= 0) return "ahora";
+            const totalMins = Math.ceil(ms / 60000);
+            const days = Math.floor(totalMins / (60 * 24));
+            const hours = Math.floor((totalMins % (60 * 24)) / 60);
+            const mins = totalMins % 60;
+            if (days > 0) return `${days}d ${hours}h`;
+            if (hours > 0) return `${hours}h ${mins}m`;
+            return `${mins}m`;
+        }
+
+        function formatShortDateTime(ms) {
+            const d = new Date(ms);
+            return d.toLocaleString('es-ES', {
+                weekday: 'short',
+                day: '2-digit',
+                month: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
+
+        function modelMatchesPool(modelName, pool) {
+            if (pool === "ALL") return true;
+            const m = String(modelName || "").toLowerCase();
+            const isClaudeOrGpt = m.includes("claude") || m.includes("gpt") || m.includes("openai");
+            if (pool === "CLAUDE_GPT") return isClaudeOrGpt;
+            if (pool === "GEMINI") return !isClaudeOrGpt;
+            return true;
+        }
+
+        function parseHourKeyToMs(key) {
+            if (!key) return NaN;
+            const normalized = key.includes("T") ? key : key.replace(" ", "T") + ":00Z";
+            return Date.parse(normalized);
+        }
+
+        function getDeviceAgeMs(dev) {
+            if (!dev || !dev.updated_at) return Infinity;
+            const ts = Date.parse(dev.updated_at);
+            if (!Number.isFinite(ts)) return Infinity;
+            return Math.max(0, Date.now() - ts);
+        }
+
+        function getWeeklyResetWindow(nowMs) {
+            const dayEl = document.getElementById("weekly-reset-day");
+            const timeEl = document.getElementById("weekly-reset-time");
+            const targetDay = parseInt(dayEl ? dayEl.value : DEFAULT_WEEKLY_RESET_DAY, 10);
+            const timeStr = (timeEl && timeEl.value) ? timeEl.value : DEFAULT_WEEKLY_RESET_TIME;
+            const [hh, mm] = timeStr.split(":").map(x => parseInt(x, 10) || 0);
+
+            const now = new Date(nowMs);
+            const candidate = new Date(now.getFullYear(), now.getMonth(), now.getDate(), hh, mm, 0, 0);
+            let diffDays = (targetDay - now.getDay() + 7) % 7;
+            candidate.setDate(candidate.getDate() + diffDays);
+            if (candidate.getTime() <= nowMs) {
+                candidate.setDate(candidate.getDate() + 7);
+            }
+            const nextResetMs = candidate.getTime();
+            const cycleStartMs = nextResetMs - SEVEN_DAYS_MS;
+            return { cycleStartMs, nextResetMs };
+        }
+
+        function get5hResetWindow(nowMs, devicesToMerge) {
+            const saved = localStorage.getItem("cloud_agy_5h_reset_at");
+            if (saved) {
+                const savedMs = Date.parse(saved);
+                if (Number.isFinite(savedMs) && savedMs > nowMs && (savedMs - nowMs) <= FIVE_HOURS_MS + 60000) {
+                    return { cycleStartMs: savedMs - FIVE_HOURS_MS, nextResetMs: savedMs, isManual: true };
+                } else {
+                    localStorage.removeItem("cloud_agy_5h_reset_at");
+                }
+            }
+
+            // Detección automática: primera petición activa dentro de las últimas 5h entre todos los equipos
+            let earliestMs = Infinity;
+            for (const dev of devicesToMerge) {
+                if (getDeviceAgeMs(dev) > FIVE_HOURS_MS) continue;
+                if (dev.recent_5h_first_at) {
+                    const ts = Date.parse(dev.recent_5h_first_at);
+                    if (Number.isFinite(ts) && ts >= nowMs - FIVE_HOURS_MS && ts <= nowMs && ts < earliestMs) {
+                        earliestMs = ts;
+                    }
+                } else if (dev.last_7d_by_hour) {
+                    for (const hk of Object.keys(dev.last_7d_by_hour)) {
+                        const ts = parseHourKeyToMs(hk);
+                        if (Number.isFinite(ts) && ts >= nowMs - FIVE_HOURS_MS && ts <= nowMs && ts < earliestMs) {
+                            earliestMs = ts;
+                        }
+                    }
+                }
+            }
+
+            if (Number.isFinite(earliestMs)) {
+                return { cycleStartMs: earliestMs, nextResetMs: earliestMs + FIVE_HOURS_MS, isManual: false };
+            }
+            return { cycleStartMs: nowMs - FIVE_HOURS_MS, nextResetMs: null, isManual: false };
+        }
+
+        function updateWeeklyResetFromPicker() {
+            const day = document.getElementById("weekly-reset-day").value;
+            const time = document.getElementById("weekly-reset-time").value || DEFAULT_WEEKLY_RESET_TIME;
+            localStorage.setItem("cloud_agy_weekly_reset_day", day);
+            localStorage.setItem("cloud_agy_weekly_reset_time", time);
+            renderView();
+        }
+
+        function applyWeeklyResetFromCountdown() {
+            const d = Math.max(0, parseInt(document.getElementById("sync-7d-d").value, 10) || 0);
+            const h = Math.max(0, parseInt(document.getElementById("sync-7d-h").value, 10) || 0);
+            if (d === 0 && h === 0) return;
+            const target = new Date(Date.now() + (d * 24 + h) * HOUR_MS);
+            const hh = String(target.getHours()).padStart(2, "0");
+            const mm = String(target.getMinutes()).padStart(2, "0");
+            document.getElementById("weekly-reset-day").value = String(target.getDay());
+            document.getElementById("weekly-reset-time").value = `${hh}:${mm}`;
+            document.getElementById("sync-7d-d").value = "";
+            document.getElementById("sync-7d-h").value = "";
+            updateWeeklyResetFromPicker();
+        }
+
+        function applyManual5hReset() {
+            const h = Math.max(0, parseInt(document.getElementById("sync-5h-h").value, 10) || 0);
+            const m = Math.max(0, parseInt(document.getElementById("sync-5h-m").value, 10) || 0);
+            const totalMs = (h * 60 + m) * 60 * 1000;
+            if (totalMs <= 0 || totalMs > FIVE_HOURS_MS) return;
+            const targetIso = new Date(Date.now() + totalMs).toISOString();
+            localStorage.setItem("cloud_agy_5h_reset_at", targetIso);
+            document.getElementById("sync-5h-h").value = "";
+            document.getElementById("sync-5h-m").value = "";
+            renderView();
+        }
+
+        function clearManual5hReset() {
+            localStorage.removeItem("cloud_agy_5h_reset_at");
+            renderView();
+        }
 
         async function decryptWithPin(encObj, pin) {
             if (!encObj || !encObj.salt || !encObj.data) return null;
@@ -400,6 +609,7 @@
         function renderProjectsSection() {
             if (!unlockedPin) return;
             const selected = document.getElementById("device-selector").value;
+            const pool = document.getElementById("pool-selector").value;
             const deviceKeys = (selected !== "ALL" && allDevicesData[selected])
                 ? [selected]
                 : Object.keys(allDevicesData);
@@ -416,16 +626,27 @@
 
                 const bucket = projData[activeProjectsRange] || {};
                 for (const [projName, vals] of Object.entries(bucket)) {
+                    const filteredModels = {};
+                    let matchedReqs = 0;
+                    for (const [m, cnt] of Object.entries(vals.models || {})) {
+                        if (modelMatchesPool(m, pool)) {
+                            filteredModels[m] = cnt;
+                            matchedReqs += cnt;
+                        }
+                    }
+                    if (pool !== "ALL" && matchedReqs === 0) continue;
+
                     if (!merged[projName]) {
                         merged[projName] = { requests: 0, input: 0, output: 0, cache: 0, devices: new Set(), models: {} };
                     }
                     const target = merged[projName];
-                    target.requests += vals.requests || 0;
-                    target.input += vals.input || 0;
-                    target.output += vals.output || 0;
-                    target.cache += vals.cache || 0;
+                    const ratio = (pool === "ALL" || !vals.requests) ? 1 : (matchedReqs / vals.requests);
+                    target.requests += (pool === "ALL" ? (vals.requests || 0) : matchedReqs);
+                    target.input += Math.round((vals.input || 0) * ratio);
+                    target.output += Math.round((vals.output || 0) * ratio);
+                    target.cache += Math.round((vals.cache || 0) * ratio);
                     target.devices.add(dev.device_id || key);
-                    for (const [m, cnt] of Object.entries(vals.models || {})) {
+                    for (const [m, cnt] of Object.entries(filteredModels)) {
                         target.models[m] = (target.models[m] || 0) + cnt;
                     }
                 }
@@ -457,44 +678,6 @@
             }).join("");
         }
 
-        function escapeHtml(value) {
-            return String(value ?? "")
-                .replace(/&/g, "&amp;")
-                .replace(/</g, "&lt;")
-                .replace(/>/g, "&gt;")
-                .replace(/"/g, "&quot;")
-                .replace(/'/g, "&#39;");
-        }
-
-        function formatNum(n) {
-            return (n || 0).toLocaleString('es-ES');
-        }
-
-        function formatRelativeAge(ageMs) {
-            if (!Number.isFinite(ageMs) || ageMs < 0) return "ahora";
-            const mins = Math.floor(ageMs / 60000);
-            if (mins < 1) return "hace <1 min";
-            if (mins < 60) return `hace ${mins} min`;
-            const hours = Math.floor(mins / 60);
-            if (hours < 24) return `hace ${hours} h`;
-            const days = Math.floor(hours / 24);
-            return `hace ${days} d`;
-        }
-
-        function parseHourKeyToMs(key) {
-            if (!key) return NaN;
-            // Soporta tanto ISO UTC ("2026-11-25T08:00:00Z") como formato antiguo ("2026-11-25 08:00")
-            const normalized = key.includes("T") ? key : key.replace(" ", "T") + ":00Z";
-            return Date.parse(normalized);
-        }
-
-        function getDeviceAgeMs(dev) {
-            if (!dev || !dev.updated_at) return Infinity;
-            const ts = Date.parse(dev.updated_at);
-            if (!Number.isFinite(ts)) return Infinity;
-            return Math.max(0, Date.now() - ts);
-        }
-
         async function fetchData() {
             try {
                 const manifestResp = await fetch('data/manifest.json?t=' + Date.now());
@@ -505,7 +688,6 @@
                 const deviceKeys = Object.keys(devices);
                 const nowMs = Date.now();
                 
-                // Update sync bar with freshness indicator
                 const syncList = document.getElementById("sync-devices-list");
                 syncList.innerHTML = deviceKeys.map(d => {
                     const updatedAt = devices[d].updated_at;
@@ -517,14 +699,12 @@
                     return `<span class="sync-device-item" title="Última sincronización: ${escapeHtml(updatedAt || 'desconocida')}"><span class="dot ${dotClass}"></span> <strong>${escapeHtml(d)}</strong> (${escapeHtml(timeLabel)}, ${escapeHtml(ageText)}${expiredNote})</span>`;
                 }).join(" &bull; ") || "Sin dispositivos sincronizados aún";
 
-                // Update select dropdown
                 const selector = document.getElementById("device-selector");
                 const currentSelected = selector.value;
                 selector.innerHTML = '<option value="ALL">🌐 Todos los Dispositivos (Combinado)</option>' +
                     deviceKeys.map(k => `<option value="${escapeHtml(k)}">💻 ${escapeHtml(k)}</option>`).join("");
                 if (deviceKeys.includes(currentSelected)) selector.value = currentSelected;
 
-                // Fetch each device JSON in parallel
                 allDevicesData = {};
                 await Promise.all(deviceKeys.map(async (key) => {
                     try {
@@ -549,14 +729,34 @@
             }
         }
 
+        function addModelEntry(target, modelName, vals) {
+            target.requests += vals.requests || 0;
+            target.input_tokens += vals.input || 0;
+            target.output_tokens += vals.output || 0;
+            target.cache_tokens += vals.cache || 0;
+            if (!target.models[modelName]) {
+                target.models[modelName] = { requests: 0, input: 0, output: 0, cache: 0 };
+            }
+            target.models[modelName].requests += vals.requests || 0;
+            target.models[modelName].input += vals.input || 0;
+            target.models[modelName].output += vals.output || 0;
+            target.models[modelName].cache += vals.cache || 0;
+        }
+
         function getActiveMetrics() {
             const selected = document.getElementById("device-selector").value;
+            const pool = document.getElementById("pool-selector").value;
             const devicesToMerge = (selected !== "ALL" && allDevicesData[selected])
                 ? [allDevicesData[selected]]
                 : Object.values(allDevicesData);
 
             const nowMs = Date.now();
+            const win5h = get5hResetWindow(nowMs, devicesToMerge);
+            const win7d = getWeeklyResetWindow(nowMs);
+
             const merged = {
+                win5h,
+                win7d,
                 last_5h: { requests: 0, input_tokens: 0, output_tokens: 0, cache_tokens: 0, models: {} },
                 last_7d: { requests: 0, input_tokens: 0, output_tokens: 0, cache_tokens: 0, models: {} },
                 last_24h_by_hour: {},
@@ -564,74 +764,114 @@
                 total_requests: 0,
                 total_tokens: 0,
                 expired_5h_devices: [],
+                legacy_7d_devices: [],
                 expired_7d_devices: []
             };
 
             for (const dev of devicesToMerge) {
                 const ageMs = getDeviceAgeMs(dev);
                 const devName = dev.device_id || "Equipo";
+                const hasHourly7d = dev.last_7d_by_hour && Object.keys(dev.last_7d_by_hour).length > 0;
 
                 merged.total_requests += dev.total_requests || 0;
                 merged.total_tokens += dev.total_tokens || 0;
 
-                // 5h: solo sumar si la última sincronización fue hace <= 5 horas
-                if (ageMs <= FIVE_HOURS_MS && dev.last_5h) {
-                    merged.last_5h.requests += dev.last_5h.requests || 0;
-                    merged.last_5h.input_tokens += dev.last_5h.input_tokens || 0;
-                    merged.last_5h.output_tokens += dev.last_5h.output_tokens || 0;
-                    merged.last_5h.cache_tokens += dev.last_5h.cache_tokens || 0;
+                // 5h basado en el ciclo actual (win5h.cycleStartMs .. nowMs)
+                if (hasHourly7d) {
+                    for (const [hk, hVals] of Object.entries(dev.last_7d_by_hour)) {
+                        const hStart = parseHourKeyToMs(hk);
+                        if (!Number.isFinite(hStart)) continue;
+                        const hEnd = hStart + HOUR_MS;
+                        if (hEnd > win5h.cycleStartMs && hStart <= nowMs) {
+                            for (const [m, vals] of Object.entries(hVals.models || {})) {
+                                if (modelMatchesPool(m, pool)) {
+                                    addModelEntry(merged.last_5h, m, vals);
+                                }
+                            }
+                        }
+                    }
+                } else if (ageMs <= FIVE_HOURS_MS && dev.last_5h) {
                     for (const [m, vals] of Object.entries(dev.last_5h.models || {})) {
-                        if (!merged.last_5h.models[m]) merged.last_5h.models[m] = { requests: 0, input: 0, output: 0, cache: 0 };
-                        merged.last_5h.models[m].requests += vals.requests || 0;
-                        merged.last_5h.models[m].input += vals.input || 0;
-                        merged.last_5h.models[m].output += vals.output || 0;
-                        merged.last_5h.models[m].cache += vals.cache || 0;
+                        if (modelMatchesPool(m, pool)) {
+                            addModelEntry(merged.last_5h, m, vals);
+                        }
                     }
                 } else if (dev.last_5h && (dev.last_5h.requests || 0) > 0) {
                     merged.expired_5h_devices.push(devName);
                 }
 
-                // 7d: solo sumar si la última sincronización fue hace <= 7 días
-                if (ageMs <= SEVEN_DAYS_MS && dev.last_7d) {
-                    merged.last_7d.requests += dev.last_7d.requests || 0;
-                    merged.last_7d.input_tokens += dev.last_7d.input_tokens || 0;
-                    merged.last_7d.output_tokens += dev.last_7d.output_tokens || 0;
-                    merged.last_7d.cache_tokens += dev.last_7d.cache_tokens || 0;
+                // Semanal basado en el ciclo de reseteo real (win7d.cycleStartMs .. nowMs)
+                if (hasHourly7d) {
+                    for (const [hk, hVals] of Object.entries(dev.last_7d_by_hour)) {
+                        const hStart = parseHourKeyToMs(hk);
+                        if (!Number.isFinite(hStart)) continue;
+                        const hEnd = hStart + HOUR_MS;
+                        if (hEnd > win7d.cycleStartMs && hStart <= nowMs) {
+                            for (const [m, vals] of Object.entries(hVals.models || {})) {
+                                if (modelMatchesPool(m, pool)) {
+                                    addModelEntry(merged.last_7d, m, vals);
+                                }
+                            }
+                        }
+                    }
+                } else if (ageMs <= SEVEN_DAYS_MS && dev.last_7d) {
+                    merged.legacy_7d_devices.push(devName);
                     for (const [m, vals] of Object.entries(dev.last_7d.models || {})) {
-                        if (!merged.last_7d.models[m]) merged.last_7d.models[m] = { requests: 0, input: 0, output: 0, cache: 0 };
-                        merged.last_7d.models[m].requests += vals.requests || 0;
-                        merged.last_7d.models[m].input += vals.input || 0;
-                        merged.last_7d.models[m].output += vals.output || 0;
-                        merged.last_7d.models[m].cache += vals.cache || 0;
+                        if (modelMatchesPool(m, pool)) {
+                            addModelEntry(merged.last_7d, m, vals);
+                        }
                     }
                 } else if (dev.last_7d && (dev.last_7d.requests || 0) > 0) {
                     merged.expired_7d_devices.push(devName);
                 }
 
-                // 24h por hora (filtrando solo horas dentro de las últimas 24h reales)
-                for (const [hourKey, hVals] of Object.entries(dev.last_24h_by_hour || {})) {
+                // 24h por hora (con filtro de pool si tiene last_7d_by_hour)
+                const hourlySource = hasHourly7d ? dev.last_7d_by_hour : (dev.last_24h_by_hour || {});
+                for (const [hourKey, hVals] of Object.entries(hourlySource)) {
                     const ts = parseHourKeyToMs(hourKey);
-                    if (!Number.isFinite(ts) || (nowMs - ts) > TWENTY_FOUR_HOURS_MS) continue;
+                    if (!Number.isFinite(ts) || (nowMs - ts) > TWENTY_FOUR_HOURS_MS || ts > nowMs + HOUR_MS) continue;
                     const bucketKey = new Date(ts).toISOString().slice(0, 13) + ":00:00Z";
                     if (!merged.last_24h_by_hour[bucketKey]) {
                         merged.last_24h_by_hour[bucketKey] = { requests: 0, input: 0, output: 0, cache: 0 };
                     }
                     const target = merged.last_24h_by_hour[bucketKey];
-                    target.requests += hVals.requests || 0;
-                    target.input += hVals.input || 0;
-                    target.output += hVals.output || 0;
-                    target.cache += hVals.cache || 0;
+                    if (hVals.models) {
+                        for (const [m, vals] of Object.entries(hVals.models)) {
+                            if (modelMatchesPool(m, pool)) {
+                                target.requests += vals.requests || 0;
+                                target.input += vals.input || 0;
+                                target.output += vals.output || 0;
+                                target.cache += vals.cache || 0;
+                            }
+                        }
+                    } else if (pool === "ALL") {
+                        target.requests += hVals.requests || 0;
+                        target.input += hVals.input || 0;
+                        target.output += hVals.output || 0;
+                        target.cache += hVals.cache || 0;
+                    }
                 }
 
                 // 14d por día
                 for (const [day, dVals] of Object.entries(dev.last_14d_by_day || {})) {
+                    const filteredModels = {};
+                    let matchedReqs = 0;
+                    for (const [m, c] of Object.entries(dVals.models || {})) {
+                        if (modelMatchesPool(m, pool)) {
+                            filteredModels[m] = c;
+                            matchedReqs += c;
+                        }
+                    }
+                    if (pool !== "ALL" && matchedReqs === 0) continue;
+
                     if (!merged.last_14d_by_day[day]) merged.last_14d_by_day[day] = { requests: 0, input: 0, output: 0, cache: 0, models: {} };
                     const target = merged.last_14d_by_day[day];
-                    target.requests += dVals.requests || 0;
-                    target.input += dVals.input || 0;
-                    target.output += dVals.output || 0;
-                    target.cache += dVals.cache || 0;
-                    for (const [m, c] of Object.entries(dVals.models || {})) {
+                    const ratio = (pool === "ALL" || !dVals.requests) ? 1 : (matchedReqs / dVals.requests);
+                    target.requests += (pool === "ALL" ? (dVals.requests || 0) : matchedReqs);
+                    target.input += Math.round((dVals.input || 0) * ratio);
+                    target.output += Math.round((dVals.output || 0) * ratio);
+                    target.cache += Math.round((dVals.cache || 0) * ratio);
+                    for (const [m, c] of Object.entries(filteredModels)) {
                         target.models[m] = (target.models[m] || 0) + c;
                     }
                 }
@@ -661,12 +901,11 @@
             const chart = document.getElementById("hourly-chart");
             chart.innerHTML = "";
 
-            // Construir las últimas 24 horas exactas hasta la hora actual
             const now = new Date();
             now.setMinutes(0, 0, 0);
             const slots = [];
             for (let i = 23; i >= 0; i--) {
-                const slotDate = new Date(now.getTime() - i * 3600 * 1000);
+                const slotDate = new Date(now.getTime() - i * HOUR_MS);
                 const isoKey = slotDate.toISOString().slice(0, 13) + ":00:00Z";
                 const stats = hourlyData[isoKey] || { requests: 0, input: 0, output: 0, cache: 0 };
                 slots.push({ date: slotDate, stats });
@@ -694,6 +933,7 @@
 
         function renderView() {
             const data = getActiveMetrics();
+            const nowMs = Date.now();
 
             // Total histórico
             document.getElementById("total-historical-pill").innerHTML =
@@ -706,10 +946,22 @@
             document.getElementById("val-req-5h").textContent = formatNum(req5h);
             document.getElementById("val-tokens-5h").innerHTML = `<strong>${formatNum(in5h + out5h)}</strong> tokens totales (${formatNum(in5h)} in / ${formatNum(out5h)} out)`;
 
+            const badge5h = document.getElementById("badge-reset-5h");
+            const cycleInfo5h = document.getElementById("cycle-info-5h");
+            if (data.win5h.nextResetMs && data.win5h.nextResetMs > nowMs) {
+                badge5h.textContent = "Resetea en " + formatCountdown(data.win5h.nextResetMs - nowMs);
+                badge5h.title = "Próximo reseteo: " + formatShortDateTime(data.win5h.nextResetMs);
+                cycleInfo5h.textContent = `Ciclo ${data.win5h.isManual ? '(sincronizado)' : '(auto)'}: desde ${formatShortDateTime(data.win5h.cycleStartMs)} hasta ${formatShortDateTime(data.win5h.nextResetMs)}`;
+            } else {
+                badge5h.textContent = "Sin uso en ciclo";
+                badge5h.title = "El temporizador de 5h arrancará con tu próxima petición";
+                cycleInfo5h.textContent = "Sin peticiones recientes en las últimas 5 horas.";
+            }
+
             const staleNote5h = document.getElementById("stale-note-5h");
             if (data.expired_5h_devices.length > 0) {
                 staleNote5h.style.display = "block";
-                staleNote5h.textContent = `Ventana de 5h expirada (excluida por inactividad >5h): ${data.expired_5h_devices.join(", ")}`;
+                staleNote5h.textContent = `Ventana de 5h expirada (inactividad >5h): ${data.expired_5h_devices.join(", ")}`;
             } else {
                 staleNote5h.style.display = "none";
             }
@@ -722,19 +974,32 @@
             bar5h.className = "progress-bar-fill " + (pct5h > 90 ? "danger" : (pct5h > 70 ? "warning" : "normal"));
             document.getElementById("label-remaining-5h").innerHTML = `Restante: <strong>${formatNum(rem5h)}</strong> (${100 - pct5h}%)`;
 
-            renderModelsTable("models-5h-body", data.last_5h.models, "Sin actividad en las últimas 5 horas");
+            renderModelsTable("models-5h-body", data.last_5h.models, "Sin actividad en este ciclo de 5h");
 
-            // 7 Days
+            // Weekly Cycle
             const req7d = data.last_7d.requests;
             const in7d = data.last_7d.input_tokens;
             const out7d = data.last_7d.output_tokens;
             document.getElementById("val-req-7d").textContent = formatNum(req7d);
             document.getElementById("val-tokens-7d").innerHTML = `<strong>${formatNum(in7d + out7d)}</strong> tokens totales (${formatNum(in7d)} in / ${formatNum(out7d)} out)`;
 
+            const badge7d = document.getElementById("badge-reset-7d");
+            badge7d.textContent = "Resetea en " + formatCountdown(data.win7d.nextResetMs - nowMs);
+            badge7d.title = "Próximo reseteo semanal: " + formatShortDateTime(data.win7d.nextResetMs);
+            document.getElementById("cycle-info-7d").textContent =
+                `Semana actual: desde ${formatShortDateTime(data.win7d.cycleStartMs)} hasta ${formatShortDateTime(data.win7d.nextResetMs)}`;
+
             const staleNote7d = document.getElementById("stale-note-7d");
+            const notes7d = [];
+            if (data.legacy_7d_devices.length > 0) {
+                notes7d.push(`Actualiza exporter.py en ${data.legacy_7d_devices.join(", ")} para corte semanal exacto por hora.`);
+            }
             if (data.expired_7d_devices.length > 0) {
+                notes7d.push(`Inactivos >7d excluidos: ${data.expired_7d_devices.join(", ")}.`);
+            }
+            if (notes7d.length > 0) {
                 staleNote7d.style.display = "block";
-                staleNote7d.textContent = `Ventana de 7d expirada (excluida por inactividad >7d): ${data.expired_7d_devices.join(", ")}`;
+                staleNote7d.textContent = notes7d.join(" ");
             } else {
                 staleNote7d.style.display = "none";
             }
@@ -747,7 +1012,7 @@
             bar7d.className = "progress-bar-fill " + (pct7d > 90 ? "danger" : (pct7d > 70 ? "warning" : "normal"));
             document.getElementById("label-remaining-7d").innerHTML = `Restante: <strong>${formatNum(rem7d)}</strong> (${100 - pct7d}%)`;
 
-            renderModelsTable("models-7d-body", data.last_7d.models, "Sin actividad en los últimos 7 días");
+            renderModelsTable("models-7d-body", data.last_7d.models, "Sin actividad en esta semana");
 
             // 24h hourly chart
             renderHourlyChart(data.last_24h_by_hour || {});
@@ -803,9 +1068,15 @@
         window.onload = () => {
             const saved5h = localStorage.getItem("cloud_agy_limit_5h");
             const saved7d = localStorage.getItem("cloud_agy_limit_7d");
+            const savedWDay = localStorage.getItem("cloud_agy_weekly_reset_day");
+            const savedWTime = localStorage.getItem("cloud_agy_weekly_reset_time");
             if (saved5h) document.getElementById("limit-5h").value = saved5h;
             if (saved7d) document.getElementById("limit-7d").value = saved7d;
+            document.getElementById("weekly-reset-day").value = savedWDay !== null ? savedWDay : String(DEFAULT_WEEKLY_RESET_DAY);
+            document.getElementById("weekly-reset-time").value = savedWTime || DEFAULT_WEEKLY_RESET_TIME;
+
             fetchData();
+            setInterval(() => renderView(), 60000);
         };
     </script>
 </body>

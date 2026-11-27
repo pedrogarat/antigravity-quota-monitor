@@ -77,6 +77,14 @@ def encrypt_with_pin(obj, pin):
     }
 
 
+def _new_model_bucket():
+    return {"requests": 0, "input": 0, "output": 0, "cache": 0}
+
+
+def _new_hour_model_bucket():
+    return {"requests": 0, "input": 0, "output": 0, "cache": 0, "models": defaultdict(_new_model_bucket)}
+
+
 def _new_project_bucket():
     return {"requests": 0, "input": 0, "output": 0, "cache": 0, "models": defaultdict(int)}
 
@@ -107,23 +115,28 @@ def collect_data(brain_dir, device_id, projects_pin=DEFAULT_PROJECTS_PIN):
     stats = {
         "device_id": device_id,
         "updated_at": now.isoformat(),
+        "recent_5h_first_at": None,
         "last_5h": {"requests": 0, "input_tokens": 0, "output_tokens": 0, "cache_tokens": 0, "models": {}},
         "last_7d": {"requests": 0, "input_tokens": 0, "output_tokens": 0, "cache_tokens": 0, "models": {}},
         "last_24h_by_hour": {},
+        "last_7d_by_hour": {},
         "last_14d_by_day": {},
         "total_requests": 0,
         "total_tokens": 0,
     }
 
-    models_5h = defaultdict(lambda: {"requests": 0, "input": 0, "output": 0, "cache": 0})
-    models_7d = defaultdict(lambda: {"requests": 0, "input": 0, "output": 0, "cache": 0})
-    hours_24 = defaultdict(lambda: {"requests": 0, "input": 0, "output": 0, "cache": 0})
+    models_5h = defaultdict(_new_model_bucket)
+    models_7d = defaultdict(_new_model_bucket)
+    hours_24 = defaultdict(_new_model_bucket)
+    hours_7d = defaultdict(_new_hour_model_bucket)
     days_14 = defaultdict(lambda: {"requests": 0, "input": 0, "output": 0, "cache": 0, "models": defaultdict(int)})
 
     proj_5h = defaultdict(_new_project_bucket)
     proj_7d = defaultdict(_new_project_bucket)
     proj_14d = defaultdict(_new_project_bucket)
     proj_total = defaultdict(_new_project_bucket)
+
+    earliest_5h_dt = None
 
     pattern = os.path.join(brain_dir, "*", ".system_generated", "logs", "transcript.jsonl")
     for path in glob.glob(pattern):
@@ -171,6 +184,8 @@ def collect_data(brain_dir, device_id, projects_pin=DEFAULT_PROJECTS_PIN):
                         pt["models"][model] += 1
 
                         if dt_utc >= five_hours_ago:
+                            if earliest_5h_dt is None or dt_utc < earliest_5h_dt:
+                                earliest_5h_dt = dt_utc
                             p = stats["last_5h"]
                             p["requests"] += 1
                             p["input_tokens"] += inp
@@ -200,6 +215,18 @@ def collect_data(brain_dir, device_id, projects_pin=DEFAULT_PROJECTS_PIN):
                             m["input"] += inp
                             m["output"] += out
                             m["cache"] += cache
+
+                            hour_key = dt_utc.strftime("%Y-%m-%dT%H:00:00Z")
+                            h7 = hours_7d[hour_key]
+                            h7["requests"] += 1
+                            h7["input"] += inp
+                            h7["output"] += out
+                            h7["cache"] += cache
+                            hm = h7["models"][model]
+                            hm["requests"] += 1
+                            hm["input"] += inp
+                            hm["output"] += out
+                            hm["cache"] += cache
 
                             p7 = proj_7d[project_name]
                             p7["requests"] += 1
@@ -234,9 +261,22 @@ def collect_data(brain_dir, device_id, projects_pin=DEFAULT_PROJECTS_PIN):
         except Exception:
             pass
 
+    if earliest_5h_dt is not None:
+        stats["recent_5h_first_at"] = earliest_5h_dt.isoformat()
+
     stats["last_5h"]["models"] = dict(sorted(models_5h.items()))
     stats["last_7d"]["models"] = dict(sorted(models_7d.items()))
     stats["last_24h_by_hour"] = dict(sorted(hours_24.items()))
+    stats["last_7d_by_hour"] = {
+        k: {
+            "requests": v["requests"],
+            "input": v["input"],
+            "output": v["output"],
+            "cache": v["cache"],
+            "models": dict(sorted(v["models"].items())),
+        }
+        for k, v in sorted(hours_7d.items())
+    }
     stats["last_14d_by_day"] = {
         k: {
             "requests": v["requests"],
